@@ -39,6 +39,8 @@ function escribir(
     espacioDespues?: number;
     interlineado?: number;
     sangria?: number;
+    /** Evita que el bloque se parta entre dos páginas. */
+    mantenerJunto?: boolean;
   } = {}
 ) {
   const {
@@ -57,6 +59,11 @@ function escribir(
   const altoLinea = tam * interlineado;
 
   ctx.y += espacioAntes;
+  // Un bullet partido a mitad de frase entre dos páginas se lee como
+  // descuido, así que el bloque salta entero a la página siguiente.
+  if (opciones.mantenerJunto) {
+    nuevaPaginaSiHaceFalta(ctx, lineas.length * altoLinea);
+  }
   for (const linea of lineas) {
     nuevaPaginaSiHaceFalta(ctx, altoLinea);
     ctx.doc.text(linea, MARGEN + sangria, ctx.y);
@@ -137,7 +144,12 @@ export function construirCVPDF(
       .join(" | ");
     escribir(ctx, linea2, { tam: 9.6, estilo: "italic", espacioDespues: 3 });
     for (const b of exp.bullets) {
-      escribir(ctx, `•  ${b.texto}`, { tam: 10, sangria: 10, espacioDespues: 1.5 });
+      escribir(ctx, `•  ${b.texto}`, {
+        tam: 10,
+        sangria: 10,
+        espacioDespues: 1.5,
+        mantenerJunto: true,
+      });
     }
   });
 
@@ -147,6 +159,7 @@ export function construirCVPDF(
       escribir(ctx, `${g.categoria}: ${g.items.join(", ")}`, {
         tam: 10,
         espacioDespues: 2.5,
+        mantenerJunto: true,
       });
     }
   }
@@ -154,14 +167,24 @@ export function construirCVPDF(
   if (cv.certificaciones.length) {
     seccion(ctx, t.certificaciones);
     for (const c of cv.certificaciones) {
-      escribir(ctx, `•  ${c}`, { tam: 10, sangria: 10, espacioDespues: 1 });
+      escribir(ctx, `•  ${c}`, {
+        tam: 10,
+        sangria: 10,
+        espacioDespues: 1,
+        mantenerJunto: true,
+      });
     }
   }
 
   if (cv.educacion.length) {
     seccion(ctx, t.educacion);
     for (const e of cv.educacion) {
-      escribir(ctx, `•  ${e}`, { tam: 10, sangria: 10, espacioDespues: 1 });
+      escribir(ctx, `•  ${e}`, {
+        tam: 10,
+        sangria: 10,
+        espacioDespues: 1,
+        mantenerJunto: true,
+      });
     }
   }
 

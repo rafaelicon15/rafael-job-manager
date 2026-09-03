@@ -150,15 +150,18 @@ Cuando estén puestas, en **Buscar vacantes** verás que los botones "Adzuna" y
 ## Paso 5 — Completa tu perfil maestro
 
 Ve a **Perfil maestro**. Arriba te sale un aviso amarillo con lo que falta.
-Hay tres cosas que debes rellenar sí o sí, porque el motor tiene **prohibido
-inventarlas**:
 
-1. **Fechas de cada experiencia.** Ahora están vacías. Sin ellas, el CV sale sin
-   periodos y eso lo penaliza cualquier ATS. Formato: `Ene 2023` / `Actualidad`.
-2. **Tu nivel real de inglés.** Ahora dice "Pendiente de definir". Como buscas
+Ya están cargadas y verificadas contra tu LinkedIn y tu portafolio las siete
+experiencias con sus fechas y cargos, los 20 logros reutilizables, las
+habilidades por nivel y las fechas de estudios.
+
+Quedan **dos cosas** que solo puedes poner tú, porque el motor tiene
+**prohibido inventarlas**:
+
+1. **Tu nivel real de inglés.** Ahora dice "Pendiente de definir". Como buscas
    remoto worldwide, esto sale en casi todas las entrevistas. Pon lo que puedas
    sostener en una llamada: `B1 conversacional`, `B2 profesional`, etc.
-3. **Tu expectativa salarial** (mínimo y objetivo). Sin esto, cada vez que un
+2. **Tu expectativa salarial** (mínimo y objetivo). Sin esto, cada vez que un
    formulario te pregunte por el sueldo el motor te dejará un
    `[COMPLETAR: expectativa salarial]` en lugar de responder.
 

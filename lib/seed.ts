@@ -34,12 +34,53 @@ export const PERFIL_INICIAL: PerfilMaestro = {
     "Digital professional with 8+ years across IT, Web Development and Advanced Digital Marketing. Specialized in Conversion Rate Optimization (CRO) and building digital ecosystems for e-commerce and services using Shopify, WordPress (Elementor) and GoHighLevel. I integrate autonomous AI agents to automate market research, SEO audits and internal workflows, and I run Google Ads and Meta Ads campaigns focused on maximizing ROI.",
   experiencias: [
     {
+      id: "exp-latam",
+      puesto: "Paid Media Specialist",
+      empresa: "Latam Business School",
+      ubicacion: "Remoto",
+      modalidad: "Remoto, jornada parcial",
+      desde: "May 2026",
+      hasta: "Actualidad",
+      resumen:
+        "Gestión de paid media para captación y crecimiento. Rol de jornada parcial, en paralelo con Cohen & Aguirre Lobby Solutions.",
+      logros: [
+        {
+          id: "l-latam-1",
+          texto:
+            "Planifico, ejecuto y optimizo campañas digitales de paid media orientadas a los objetivos de captación y crecimiento de la escuela.",
+          angulos: ["ppc"],
+          keywords: [
+            "paid media",
+            "campañas digitales",
+            "optimización de campañas",
+            "captación",
+            "growth",
+          ],
+          evidencia: [
+            { tipo: "referencia", descripcion: "Puesto actual, verificable en LinkedIn" },
+          ],
+        },
+        {
+          id: "l-latam-2",
+          texto:
+            "Analizo el rendimiento de las campañas y me coordino con el equipo de Marketing para fortalecer la generación de leads.",
+          angulos: ["ppc", "cro"],
+          keywords: [
+            "análisis de rendimiento",
+            "generación de leads",
+            "reporting",
+            "trabajo con equipo de marketing",
+          ],
+        },
+      ],
+    },
+    {
       id: "exp-cohen",
-      puesto: "Especialista en CRO, Automatización y Marketing con IA",
-      empresa: "Cohen & Aguirre (Firma de Abogados)",
-      ubicacion: "España",
-      modalidad: "Remoto",
-      desde: "",
+      puesto: "Especialista en CRO y Marketing",
+      empresa: "Cohen & Aguirre Lobby Solutions",
+      ubicacion: "Madrid, España",
+      modalidad: "Remoto, jornada completa",
+      desde: "Dic 2025",
       hasta: "Actualidad",
       resumen:
         "Responsable de conversión, analítica y automatización con IA para la captación de leads legales.",
@@ -109,13 +150,94 @@ export const PERFIL_INICIAL: PerfilMaestro = {
       ],
     },
     {
+      // Esta entrada es la que explica los solapamientos de fechas: el trabajo
+      // por cuenta propia corre en paralelo a los empleos desde 2022.
+      id: "exp-freelance",
+      puesto: "Digital Marketing (profesional independiente)",
+      empresa: "Profesional independiente",
+      ubicacion: "Venezuela",
+      modalidad: "Freelance, por proyectos",
+      desde: "Jul 2022",
+      hasta: "Actualidad",
+      resumen:
+        "Proyectos de marketing digital y desarrollo web por cuenta propia, en paralelo a los empleos a jornada completa.",
+      logros: [
+        {
+          id: "l-free-1",
+          texto:
+            "Desarrollé el sitio web corporativo de The Factory HKA República Dominicana en WordPress y Elementor, con una interfaz alineada a la identidad de marca y orientada a la experiencia de usuario.",
+          angulos: ["web", "cro"],
+          keywords: ["WordPress", "Elementor", "desarrollo web", "UX", "sitio corporativo"],
+          evidencia: [
+            {
+              tipo: "proyecto",
+              descripcion: "The Factory HKA República Dominicana (2025)",
+              url: "https://rafael.developer-ve.com",
+            },
+          ],
+        },
+        {
+          id: "l-free-2",
+          texto:
+            "Construí una tienda online de repuestos de motos con catálogo, procesamiento de pedidos en tiempo real y administración de inventario, usando Google Apps Script como backend sin servidor y Google Sheets como base de datos.",
+          angulos: ["web"],
+          keywords: [
+            "e-commerce",
+            "Google Apps Script",
+            "gestión de inventario",
+            "catálogo de productos",
+          ],
+          evidencia: [
+            {
+              tipo: "proyecto",
+              descripcion: "Tienda online de repuestos de motos (2025)",
+              url: "https://rafael.developer-ve.com",
+            },
+          ],
+        },
+        {
+          id: "l-free-3",
+          texto:
+            "Desarrollé un sistema de gestión escolar en Laravel que automatiza procesos administrativos y la gestión de calificaciones y asistencia.",
+          angulos: ["web", "ti"],
+          keywords: ["Laravel", "MySQL", "sistema de gestión", "automatización de procesos"],
+          evidencia: [
+            {
+              tipo: "proyecto",
+              descripcion: "Sistema de gestión escolar (2024)",
+              url: "https://rafael.developer-ve.com",
+            },
+          ],
+        },
+        {
+          id: "l-free-4",
+          texto:
+            "Diseñé un sistema de gestión de inventarios en Google Apps Script con actualización de stock en tiempo real y generación automática de reportes.",
+          angulos: ["web", "ti"],
+          keywords: [
+            "Google Apps Script",
+            "Google Sheets",
+            "automatización de reportes",
+            "control de stock",
+          ],
+          evidencia: [
+            {
+              tipo: "proyecto",
+              descripcion: "Sistema de gestión de inventarios (2025)",
+              url: "https://rafael.developer-ve.com",
+            },
+          ],
+        },
+      ],
+    },
+    {
       id: "exp-websell",
-      puesto: "Especialista en Campañas de Meta y Google Ads",
+      puesto: "Performance Marketing Manager | Paid Media Specialist (Meta & Google Ads)",
       empresa: "The WebSell",
-      ubicacion: "Maracay, Venezuela",
-      modalidad: "Presencial",
-      desde: "",
-      hasta: "",
+      ubicacion: "Maracay, Estado Aragua, Venezuela",
+      modalidad: "Presencial, jornada completa",
+      desde: "Abr 2025",
+      hasta: "Jun 2026",
       resumen:
         "Gestión integral de campañas de paid media y análisis de rendimiento.",
       logros: [
@@ -163,12 +285,12 @@ export const PERFIL_INICIAL: PerfilMaestro = {
     },
     {
       id: "exp-maxiplast",
-      puesto: "Especialista Tecnológico",
+      puesto: "IT Infrastructure Manager | SysAdmin & Network Specialist",
       empresa: "Envases Maxiplast",
-      ubicacion: "Zona Industrial Los Tanques, Venezuela",
+      ubicacion: "Estado Aragua, Venezuela",
       modalidad: "Presencial",
-      desde: "",
-      hasta: "",
+      desde: "Feb 2023",
+      hasta: "Jul 2025",
       resumen:
         "Infraestructura TI, redes y seguridad electrónica en entorno industrial.",
       logros: [
@@ -201,12 +323,12 @@ export const PERFIL_INICIAL: PerfilMaestro = {
     },
     {
       id: "exp-frontinos",
-      puesto: "Diseñador Gráfico y Especialista en Marketing Digital",
+      puesto: "Diseñador Gráfico & Marketing Digital",
       empresa: "Frontinos Tec",
       ubicacion: "Venezuela",
       modalidad: "Remoto",
-      desde: "",
-      hasta: "",
+      desde: "Ene 2020",
+      hasta: "Feb 2023",
       resumen:
         "Marketing digital, e-commerce y diseño de contenido visual.",
       logros: [
@@ -254,12 +376,12 @@ export const PERFIL_INICIAL: PerfilMaestro = {
     },
     {
       id: "exp-kc",
-      puesto: "Especialista Tecnológico",
-      empresa: "Junta Administradora Kimberly Clark Venezuela",
-      ubicacion: "Maracay, Venezuela",
+      puesto: "IT Infrastructure Manager | SysAdmin & Network Specialist",
+      empresa: "Kimberly-Clark",
+      ubicacion: "Venezuela",
       modalidad: "Presencial",
-      desde: "",
-      hasta: "",
+      desde: "May 2018",
+      hasta: "Ene 2021",
       resumen: "Soporte técnico corporativo y mantenimiento de infraestructura.",
       logros: [
         {
@@ -293,7 +415,7 @@ export const PERFIL_INICIAL: PerfilMaestro = {
       titulo: "Técnico Superior en Informática",
       institucion:
         "Universidad Politécnica Territorial del Estado Aragua Federico Brito Figueroa",
-      estado: "Cursado; pendiente presentación del proyecto final",
+      estado: "2022 – 2025; cursado, pendiente la presentación del proyecto final",
     },
   ],
   certificaciones: [
@@ -376,6 +498,8 @@ export const PERFIL_INICIAL: PerfilMaestro = {
         { nombre: "Gemini", nivel: 3 },
         { nombre: "Perplexity", nivel: 3 },
         { nombre: "Automatización de reportes e investigación", nivel: 3 },
+        { nombre: "Make", nivel: 3 },
+        { nombre: "n8n", nivel: 3 },
       ],
     },
     {
@@ -398,6 +522,7 @@ export const PERFIL_INICIAL: PerfilMaestro = {
         { nombre: "TikTok Ads", nivel: 3 },
         { nombre: "Pruebas A/B", nivel: 3 },
         { nombre: "Análisis de métricas (ROI, CPA, ROAS)", nivel: 4 },
+        { nombre: "Meta Business Suite", nivel: 3 },
       ],
     },
     {
@@ -425,12 +550,30 @@ export const PERFIL_INICIAL: PerfilMaestro = {
       items: [
         { nombre: "Shopify", nivel: 4, anios: 2 },
         { nombre: "WordPress (Elementor)", nivel: 4 },
+        { nombre: "Google Apps Script", nivel: 3 },
         { nombre: "Astro", nivel: 2 },
+        { nombre: "Next.js", nivel: 2 },
+        { nombre: "React", nivel: 2 },
+        { nombre: "Laravel", nivel: 2 },
+        { nombre: "Node.js", nivel: 2 },
+        { nombre: "TypeScript", nivel: 2 },
         { nombre: "JavaScript", nivel: 2 },
         { nombre: "Python", nivel: 2 },
+        { nombre: "TailwindCSS", nivel: 2 },
+        { nombre: "Bootstrap", nivel: 2 },
+        { nombre: "Git", nivel: 2 },
         { nombre: "HTML", nivel: 3 },
         { nombre: "CSS", nivel: 3 },
         { nombre: "MySQL", nivel: 2 },
+      ],
+    },
+    {
+      categoria: "Diseño y Contenido",
+      items: [
+        { nombre: "Adobe Photoshop", nivel: 3 },
+        { nombre: "Adobe Illustrator", nivel: 3 },
+        { nombre: "Canva", nivel: 3 },
+        { nombre: "Diseño de contenido para redes sociales", nivel: 3 },
       ],
     },
     {
@@ -446,6 +589,9 @@ export const PERFIL_INICIAL: PerfilMaestro = {
         { nombre: "Google Cloud Platform", nivel: 2 },
         { nombre: "Power BI", nivel: 3 },
         { nombre: "Excel avanzado", nivel: 3 },
+        { nombre: "Cisco Packet Tracer", nivel: 3 },
+        { nombre: "Office 365", nivel: 3 },
+        { nombre: "Google Workspace", nivel: 3 },
       ],
     },
   ],
