@@ -147,7 +147,7 @@ Los tres estados básicos están en `components/ui.tsx` y se usan en toda la app
   El toast dice el motivo, el intento y la cuenta atrás.
 - **`app/error.tsx`** y **`app/global-error.tsx`** capturan cualquier excepción
   y ofrecen reintentar, en vez de dejar la pantalla de error genérica de Next.
-- **`app/not-found.tsx`** para enlaces roídos a vacantes ya eliminadas.
+- **`app/not-found.tsx`** para enlaces rotos a vacantes ya eliminadas.
 - El triaje por lotes muestra **barra de progreso** ("Evaluando 30 de 60"),
   porque son varias llamadas seguidas que pueden tardar minutos.
 
