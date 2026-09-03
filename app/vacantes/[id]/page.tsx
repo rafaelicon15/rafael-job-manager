@@ -7,6 +7,8 @@ import {
   ArrowLeft,
   ExternalLink,
   FileText,
+  Mail,
+  Mic,
   MessagesSquare,
   NotebookPen,
   Star,
@@ -18,15 +20,26 @@ import { ESTADOS, type EstadoVacante } from "@/lib/types";
 import { Alerta, InsigniaEstado, Vacio } from "@/components/ui";
 import PanelAnalisis from "@/components/PanelAnalisis";
 import PanelCV from "@/components/PanelCV";
+import PanelCarta from "@/components/PanelCarta";
 import PanelRespuestas from "@/components/PanelRespuestas";
+import PanelEntrevista from "@/components/PanelEntrevista";
 import { nuevoId } from "@/lib/store";
 
-type Pestana = "analisis" | "cv" | "respuestas" | "oferta" | "notas";
+type Pestana =
+  | "analisis"
+  | "cv"
+  | "carta"
+  | "respuestas"
+  | "entrevista"
+  | "oferta"
+  | "notas";
 
 const PESTANAS: { id: Pestana; label: string; Icono: typeof Target }[] = [
   { id: "analisis", label: "Análisis", Icono: Target },
   { id: "cv", label: "CV a medida", Icono: FileText },
+  { id: "carta", label: "Carta y mensaje", Icono: Mail },
   { id: "respuestas", label: "Respuestas", Icono: MessagesSquare },
+  { id: "entrevista", label: "Entrevista", Icono: Mic },
   { id: "oferta", label: "La oferta", Icono: ExternalLink },
   { id: "notas", label: "Notas", Icono: NotebookPen },
 ];
@@ -228,7 +241,9 @@ export default function FichaVacante({
 
       {pestana === "analisis" && <PanelAnalisis vacante={vacante} />}
       {pestana === "cv" && <PanelCV vacante={vacante} />}
+      {pestana === "carta" && <PanelCarta vacante={vacante} />}
       {pestana === "respuestas" && <PanelRespuestas vacante={vacante} />}
+      {pestana === "entrevista" && <PanelEntrevista vacante={vacante} />}
 
       {pestana === "oferta" && (
         <div className="panel p-5">

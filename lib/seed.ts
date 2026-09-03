@@ -667,7 +667,6 @@ export const PERFIL_INICIAL: PerfilMaestro = {
       "seo specialist",
       "ai automation",
     ],
-    paisesExcluidos: [],
   },
 };
 

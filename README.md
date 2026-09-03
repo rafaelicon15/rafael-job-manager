@@ -20,7 +20,9 @@ en ningún servidor.
 | **Buscar vacantes** | Consulta 7 agregadores en paralelo y puntúa el encaje de cada oferta con IA antes de que pierdas tiempo leyendo. |
 | **Ficha de vacante** | Análisis de encaje requisito por requisito, brechas con mitigación, keywords ATS, banderas rojas de la oferta y preguntas para el reclutador. |
 | **CV a medida** | Reescribe y reordena tus logros reales para esa oferta y exporta un PDF ATS-friendly en español o inglés. |
+| **Carta y mensaje** | Carta de presentación, línea de asunto y mensaje corto de LinkedIn para el reclutador, atando cada requisito a un hecho verificable. |
 | **Respuestas** | Cualquier pregunta de formulario o de reclutador, respondida como tú, con variantes cortas para campos con límite de caracteres. |
+| **Entrevista** | Guion para esa entrevista concreta: estrategia, datos a memorizar, preguntas probables con respuesta, y sobre todo las **preguntas incómodas** — requisitos que no cumples, solapamientos de fechas, título pendiente y salario. |
 | **Conversaciones** | Las vacantes que llegan por mensaje. Pega el hilo de LinkedIn, correo o WhatsApp, enlázalo con una vacante y responde desde ahí. Detecta lo que te pidieron y no has hecho, las preguntas tuyas que esquivaron, y las afirmaciones del hilo que tu perfil no respalda. |
 | **Perfil maestro** | La única fuente de verdad. Si un hecho no está aquí, el motor no puede afirmarlo. |
 | **Extensión de Chrome** | Captura la oferta que tienes abierta en LinkedIn, Computrabajo, InfoJobs o Indeed y la manda al panel con un clic. |
@@ -114,6 +116,7 @@ app/
   capture/              Recibe las ofertas de la extensión
   api/jobs/             Proxy servidor -> 7 agregadores (evita CORS)
   api/extraer/          Descarga una URL de oferta y la pasa a texto plano
+  api/gemini/           Proxy a Gemini: evita la restricción geográfica
 lib/
   types.ts              Modelo de datos
   seed.ts               Perfil maestro precargado
@@ -130,6 +133,20 @@ Los ATS leen la **capa de texto** del PDF. Un CV bonito exportado como imagen
 (lo que produce `html2canvas` y compañía) llega al reclutador como una página en
 blanco. Por eso el generador usa jsPDF escribiendo texto real, una sola columna,
 fuente estándar, sin tablas, sin cajas de texto y sin encabezados ni pies.
+
+### Por qué Gemini se llama desde el servidor
+
+La API de Gemini está restringida geográficamente y responde
+`FAILED_PRECONDITION: User location is not supported` a las peticiones que
+salen de países no soportados, Venezuela entre ellos. Si el navegador llamara
+a Google directamente, la petición saldría desde la IP del usuario y sería
+rechazada. Por eso todas las llamadas pasan por `/api/gemini`, que las emite
+desde los servidores de Vercel. La clave sigue viviendo en el navegador: viaja
+en el cuerpo de la petición, se usa para esa llamada y no se guarda ni se
+registra en el servidor.
+
+Ojo: esto resuelve el bloqueo por IP, pero no el que va asociado al proyecto de
+Google donde se creó la clave. Ese se arregla creando la clave en otro proyecto.
 
 ### Fiabilidad del motor
 

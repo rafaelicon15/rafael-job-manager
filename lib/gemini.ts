@@ -1,6 +1,6 @@
 "use client";
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { Type } from "@google/genai";
 import type {
   Analisis,
   Conversacion,
@@ -17,6 +17,8 @@ import {
   promptTriaje,
   promptParsearConversacion,
   promptHilo,
+  promptCarta,
+  promptEntrevista,
 } from "./prompts";
 
 /**
@@ -56,13 +58,12 @@ export class ErrorGemini extends Error {
   }
 }
 
-function cliente(apiKey: string) {
+function verificarClave(apiKey: string) {
   if (!apiKey.trim()) {
     throw new ErrorGemini(
       "Falta tu API key de Gemini. Ve a Ajustes y pégala para activar el motor."
     );
   }
-  return new GoogleGenAI({ apiKey: apiKey.trim() });
 }
 
 /** Traduce los errores crudos de la API a algo accionable. */
@@ -78,6 +79,10 @@ function traducirError(e: unknown): ErrorGemini {
     );
   if (/503|UNAVAILABLE|overloaded/i.test(msg))
     return new ErrorGemini("Gemini está saturado ahora mismo. Reintenta en un momento.");
+  if (/FAILED_PRECONDITION|location is not supported/i.test(msg))
+    return new ErrorGemini(
+      "Google rechaza esta API key por restricción geográfica («User location is not supported»). La clave autentica, pero el proyecto de Google en el que la creaste está marcado en un país sin acceso a la API de Gemini. Crea la clave en un proyecto nuevo desde aistudio.google.com y comprueba el país de la cuenta."
+    );
   if (/SAFETY|blocked/i.test(msg))
     return new ErrorGemini("Gemini bloqueó la respuesta por filtros de seguridad. Prueba a reformular el texto de entrada.");
   return new ErrorGemini(`Fallo al llamar a Gemini: ${msg}`, e);
@@ -121,13 +126,36 @@ function esperaDe(clase: Clase, intento: number): number {
     : 2 ** intento * 1000 + jitter;
 }
 
+/**
+ * Una llamada a Gemini a través de la ruta /api/gemini del propio proyecto.
+ * No se llama a Google desde el navegador a propósito: la API de Gemini está
+ * restringida geográficamente y rechaza las peticiones que salen de Venezuela
+ * con `FAILED_PRECONDITION: User location is not supported`. Pasando por el
+ * servidor, la petición sale desde Vercel, que sí está en región soportada.
+ */
+async function llamarProxy(
+  apiKey: string,
+  modelo: string,
+  prompt: string,
+  schema: object
+): Promise<string> {
+  const r = await fetch("/api/gemini", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ apiKey, modelo, prompt, schema }),
+  });
+  const d = await r.json().catch(() => null);
+  if (!r.ok || d?.error) throw new Error(d?.error ?? `HTTP ${r.status}`);
+  return d.texto as string;
+}
+
 async function generarJSON<T>(
   apiKey: string,
   modelo: string,
   prompt: string,
   schema: object
 ): Promise<T> {
-  const ai = cliente(apiKey);
+  verificarClave(apiKey);
   // Si el modelo elegido se satura, se reintenta con el de respaldo antes de
   // rendirse: más vale una respuesta de un modelo algo más ligero que un error.
   const cola = modelo === MODELO_RESPALDO ? [modelo] : [modelo, MODELO_RESPALDO];
@@ -136,17 +164,7 @@ async function generarJSON<T>(
   for (const actual of cola) {
     for (let intento = 0; intento <= REINTENTOS; intento++) {
       try {
-        const res = await ai.models.generateContent({
-          model: actual,
-          contents: prompt,
-          config: {
-            responseMimeType: "application/json",
-            responseSchema: schema,
-            temperature: 0.4,
-          },
-        });
-        const texto = res.text;
-        if (!texto) throw new ErrorGemini("Gemini devolvió una respuesta vacía.");
+        const texto = await llamarProxy(apiKey, actual, prompt, schema);
         if (actual !== modelo)
           console.info(`Job Manager: ${modelo} no respondía; se usó ${actual}.`);
         return JSON.parse(texto) as T;
@@ -616,5 +634,120 @@ export function redactarEnHilo(
       tono
     ),
     esquemaHilo
+  );
+}
+
+// ------------------------------------------------- carta y entrevista
+
+const esquemaCarta = {
+  type: S.OBJECT,
+  properties: {
+    asuntoEmail: { type: S.STRING },
+    carta: { type: S.STRING },
+    mensajeReclutador: { type: S.STRING },
+    avisos: listaTexto,
+  },
+  required: ["asuntoEmail", "carta", "mensajeReclutador", "avisos"],
+};
+
+const esquemaEntrevista = {
+  type: S.OBJECT,
+  properties: {
+    estrategia: { type: S.STRING },
+    datosAMemorizar: listaTexto,
+    preguntas: {
+      type: S.ARRAY,
+      items: {
+        type: S.OBJECT,
+        properties: {
+          pregunta: { type: S.STRING },
+          porQue: { type: S.STRING },
+          respuesta: { type: S.STRING },
+          evitar: { type: S.STRING },
+        },
+        required: ["pregunta", "porQue", "respuesta", "evitar"],
+      },
+    },
+    preguntasIncomodas: {
+      type: S.ARRAY,
+      items: {
+        type: S.OBJECT,
+        properties: {
+          pregunta: { type: S.STRING },
+          respuesta: { type: S.STRING },
+          porQueDuele: { type: S.STRING },
+        },
+        required: ["pregunta", "respuesta", "porQueDuele"],
+      },
+    },
+    tuTurno: listaTexto,
+    cierre: { type: S.STRING },
+    avisos: listaTexto,
+  },
+  required: [
+    "estrategia",
+    "datosAMemorizar",
+    "preguntas",
+    "preguntasIncomodas",
+    "tuTurno",
+    "cierre",
+    "avisos",
+  ],
+};
+
+export interface CartaGenerada {
+  asuntoEmail: string;
+  carta: string;
+  mensajeReclutador: string;
+  avisos: string[];
+}
+
+export interface GuionEntrevista {
+  estrategia: string;
+  datosAMemorizar: string[];
+  preguntas: {
+    pregunta: string;
+    porQue: string;
+    respuesta: string;
+    evitar: string;
+  }[];
+  preguntasIncomodas: {
+    pregunta: string;
+    respuesta: string;
+    porQueDuele: string;
+  }[];
+  tuTurno: string[];
+  cierre: string;
+  avisos: string[];
+}
+
+export function generarCarta(
+  apiKey: string,
+  modelo: string,
+  perfil: PerfilMaestro,
+  vacante: Vacante,
+  idioma: Idioma,
+  tono: string
+) {
+  return generarJSON<CartaGenerada>(
+    apiKey,
+    modelo,
+    promptCarta(perfil, vacante, idioma, tono),
+    esquemaCarta
+  );
+}
+
+export function prepararEntrevista(
+  apiKey: string,
+  modelo: string,
+  perfil: PerfilMaestro,
+  vacante: Vacante,
+  idioma: Idioma
+) {
+  return generarJSON<GuionEntrevista>(
+    apiKey,
+    modelo,
+    promptEntrevista(perfil, vacante, idioma),
+    esquemaEntrevista
   );
 }

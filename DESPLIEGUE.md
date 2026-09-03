@@ -81,6 +81,35 @@ Medido contra la API con una clave real del plan gratuito:
 Si eliges otro modelo y se satura, la app **reintenta sola** con espera creciente
 y, si aun así falla, **cae a Flash Lite** en lugar de darte un error.
 
+### Si te sale «User location is not supported»
+
+La API de Gemini está **restringida geográficamente** y Venezuela no está entre
+los países soportados. El error exacto es:
+
+```
+FAILED_PRECONDITION: User location is not supported for the API use.
+```
+
+Comprobado con una clave real: el error va asociado al **proyecto de Google en
+el que creaste la clave**, no a tu conexión. La misma llamada, desde la misma
+IP, funciona con una clave de un proyecto soportado y falla con una de un
+proyecto marcado en un país sin acceso.
+
+Qué hacer:
+
+1. En <https://aistudio.google.com/apikey>, crea la clave en un **proyecto de
+   Google Cloud distinto** (el botón "Create API key in new project").
+2. Revisa el país de tu cuenta de Google en
+   <https://myaccount.google.com/personal-info>. Si está en un país sin acceso,
+   ninguna clave nueva de ese proyecto va a funcionar.
+3. Si sigue fallando, la alternativa es una clave de un proyecto de Cloud con
+   facturación activada, que no aplica la restricción del plan gratuito.
+
+Lo que **ya no** es un problema: la app no llama a Gemini desde tu navegador,
+sino a través de su propia ruta `/api/gemini`, así que la petición sale desde
+los servidores de Vercel y no desde tu IP en Venezuela. Tu clave sigue
+guardándose solo en tu navegador.
+
 ### Ponle un límite de gasto a la clave (5 minutos, hazlo)
 
 La clave se usa desde tu navegador, así que conviene limitarla:

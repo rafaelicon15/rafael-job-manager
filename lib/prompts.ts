@@ -321,3 +321,99 @@ Devuelve el JSON pedido. Instrucciones por campo:
 - incoherencias: ESTA ES LA PARTE MÁS IMPORTANTE. Revisa todo lo que Rafael afirmó en sus propios mensajes del hilo y compáralo con el PERFIL. Marca cualquier afirmación que el perfil NO respalde: una herramienta que dijo dominar y que no está en Habilidades, un nivel de experiencia inflado, una métrica que no existe en sus logros, un idioma sin declarar. Para cada una: la afirmación literal, por qué es un problema, y cómo reencuadrarla de forma honesta si se lo preguntan. Si todo cuadra con el perfil, devuelve lista vacía. NO inventes incoherencias para rellenar.
 - avisos: cualquier otra cosa que Rafael deba revisar antes de enviar.`;
 }
+
+// ------------------------------------------------- carta y mensajes
+
+export function promptCarta(
+  p: PerfilMaestro,
+  v: Vacante,
+  idioma: Idioma,
+  tono: string
+): string {
+  const lang = idioma === "en" ? "inglés" : "español";
+  return `Escribes EN PRIMERA PERSONA COMO SI FUERAS ${p.nombre}, no sobre él.
+
+${perfilComoTexto(p)}
+
+${reglasDeHonestidad(p)}
+
+VACANTE OBJETIVO
+  Puesto: ${v.titulo} — ${v.empresa}
+  Modalidad: ${v.modalidad} | Ubicación: ${v.ubicacion} | Salario: ${v.salario || "no publicado"}
+  Descripción:
+  """
+  ${v.descripcion.slice(0, 22000)}
+  """
+${v.analisis ? `\nANÁLISIS PREVIO
+  Ángulo a vender: ${v.analisis.anguloRecomendado}
+  Fortalezas: ${v.analisis.fortalezas.join(" | ")}
+  Brechas: ${v.analisis.brechas.map((b) => `${b.brecha} → ${b.mitigacion}`).join(" | ")}` : ""}
+
+Produce tres piezas en ${lang}, tono ${tono}:
+
+1. asuntoEmail: la línea de asunto del correo. Si la oferta pide un formato de asunto concreto, úsalo EXACTAMENTE. Máx. 80 caracteres.
+
+2. carta: la carta de presentación para el cuerpo del correo. Estructura:
+   - Primer párrafo: por qué escribes y el gancho más fuerte que tienes para ESTA empresa. Nada de "me dirijo a ustedes para".
+   - Cuerpo: 2 o 3 párrafos cortos, o bien 3-4 viñetas, cada una atando un requisito de la oferta a un hecho concreto y verificable del perfil, con herramientas y cifras reales.
+   - Si hay una brecha importante en un requisito visible, decláralo en una frase y pivota a lo que sí tienes. La transparencia proactiva gana credibilidad; que la descubran después la destruye.
+   - Cierre: propuesta concreta de siguiente paso y los enlaces de portafolio y LinkedIn.
+   - Longitud: 200-320 palabras. Que se lea en un minuto.
+   - No repitas el CV línea por línea: la carta explica el "por qué yo para esto", el CV da el detalle.
+
+3. mensajeReclutador: mensaje breve para LinkedIn o InMail dirigido al reclutador, máximo 300 caracteres, que consiga que abra el CV. Directo, sin adulación, con un solo dato que llame la atención.
+
+4. avisos: lista de lo que Rafael debe completar o revisar antes de enviar (nombre del reclutador si no lo sabes, cualquier dato que hayas dejado como [COMPLETAR: …], cualquier requisito de la oferta que no pudiste cubrir con honestidad).
+
+Nunca inventes el nombre del reclutador ni datos de la empresa que no estén en la descripción. Si no sabes a quién va dirigida, usa un saludo neutro profesional.`;
+}
+
+export function promptEntrevista(
+  p: PerfilMaestro,
+  v: Vacante,
+  idioma: Idioma
+): string {
+  const lang = idioma === "en" ? "inglés" : "español";
+  return `Eres el preparador de entrevistas de ${p.nombre}. Tu trabajo NO es darle ánimos: es anticipar exactamente por dónde le van a apretar y darle una respuesta que pueda sostener.
+
+${perfilComoTexto(p)}
+
+${reglasDeHonestidad(p)}
+
+VACANTE
+  Puesto: ${v.titulo} — ${v.empresa}
+  Modalidad: ${v.modalidad} | Ubicación: ${v.ubicacion} | Salario: ${v.salario || "no publicado"}
+  Descripción:
+  """
+  ${v.descripcion.slice(0, 22000)}
+  """
+${v.analisis ? `\nANÁLISIS PREVIO
+  Puntaje de encaje: ${v.analisis.puntaje}/100 — ${v.analisis.veredicto}
+  Ángulo a vender: ${v.analisis.anguloRecomendado}
+  Requisitos NO cubiertos: ${v.analisis.requisitos.filter((r) => r.cubierto === "no").map((r) => r.requisito).join(" | ") || "ninguno"}
+  Requisitos parciales: ${v.analisis.requisitos.filter((r) => r.cubierto === "parcial").map((r) => r.requisito).join(" | ") || "ninguno"}
+  Brechas: ${v.analisis.brechas.map((b) => `${b.brecha} → ${b.mitigacion}`).join(" | ")}
+  Banderas rojas de la oferta: ${v.analisis.banderasRojas.join(" | ") || "ninguna"}` : ""}
+
+Prepara la entrevista en ${lang}. Devuelve el JSON pedido:
+
+- estrategia: en 3-4 frases, el hilo conductor que debe mantener durante toda la conversación. Qué es lo único que quiere que recuerden de él al colgar.
+
+- datosAMemorizar: 5-8 datos duros que debe tener en la punta de la lengua: métricas reales de su perfil, herramientas concretas, fechas, nombres de empresas. Solo datos que existan en el perfil.
+
+- preguntas: 6-8 preguntas que con alta probabilidad le van a hacer en ESTA entrevista, ordenadas de más probable a menos. Para cada una:
+  * pregunta: tal como la formularía el entrevistador.
+  * porQue: qué está evaluando en realidad al preguntar eso.
+  * respuesta: la respuesta que debe dar, en primera persona, apoyada en hechos concretos del perfil. Estructura situación-acción-resultado cuando sea de experiencia, sin nombrar el método. 60-140 palabras.
+  * evitar: el error concreto que NO debe cometer al responder esa pregunta.
+
+- preguntasIncomodas: las preguntas que le van a doler, y son las más importantes. Cubre obligatoriamente, si aplican al caso: los requisitos que NO cumple, los solapamientos de fechas entre empleos, un título universitario pendiente, un nivel de idioma sin acreditar, una permanencia corta en el puesto actual, por qué se va de su trabajo actual, y la expectativa salarial frente a lo que ofrece la vacante. Para cada una: pregunta, respuesta honesta que no se hunda, y porQueDuele.
+
+- tuTurno: 4-5 preguntas que él debe hacer, que lo posicionen como profesional que evalúa y no como candidato que suplica. Al menos una debe apuntar a las banderas rojas detectadas en la oferta.
+
+- cierre: cómo cerrar la llamada en 2-3 frases, pidiendo el siguiente paso de forma concreta.
+
+- avisos: cualquier cosa que deba decidir o confirmar ANTES de la llamada, incluido cualquier dato que falte en su perfil y que le vayan a preguntar.
+
+Nunca le pongas en la boca una experiencia, herramienta, cifra o titulación que el perfil no respalde. Si un requisito no lo cumple, la respuesta debe reconocerlo y reencuadrarlo, no esquivarlo.`;
+}

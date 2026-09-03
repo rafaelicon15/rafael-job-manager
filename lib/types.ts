@@ -79,7 +79,6 @@ export interface PerfilMaestro {
     salarioObjetivo?: string;
     rolesObjetivo: string[];
     keywordsBusqueda: string[];
-    paisesExcluidos: string[];
   };
 }
 
