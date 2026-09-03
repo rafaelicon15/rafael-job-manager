@@ -88,6 +88,44 @@ function traducirError(e: unknown): ErrorGemini {
   return new ErrorGemini(`Fallo al llamar a Gemini: ${msg}`, e);
 }
 
+/**
+ * Eventos del motor para que la interfaz no se quede muda. Los reintentos por
+ * saturación pueden sumar 45 segundos de espera; sin esto el usuario solo ve un
+ * spinner quieto y da por hecho que la app se colgó.
+ */
+export type EventoMotor =
+  | { tipo: "reintento"; intento: number; tope: number; esperaMs: number; motivo: string }
+  | { tipo: "respaldo"; modeloOriginal: string; modeloUsado: string }
+  | { tipo: "fallo"; mensaje: string }
+  | { tipo: "exito" };
+
+const oyentes = new Set<(e: EventoMotor) => void>();
+
+/** Suscribe a los eventos del motor. Devuelve la función para desuscribirse. */
+export function escucharMotor(fn: (e: EventoMotor) => void): () => void {
+  oyentes.add(fn);
+  return () => {
+    oyentes.delete(fn);
+  };
+}
+
+function emitir(e: EventoMotor) {
+  for (const fn of oyentes) {
+    try {
+      fn(e);
+    } catch {
+      // Un oyente roto no debe tumbar la generación.
+    }
+  }
+}
+
+const MOTIVOS: Record<string, string> = {
+  saturado: "Gemini está saturado",
+  limitePorMinuto: "Límite de peticiones por minuto",
+  cuotaDiaria: "Cuota diaria agotada",
+  fatal: "Error",
+};
+
 const REINTENTOS = 4;
 
 const dormir = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -166,27 +204,44 @@ async function generarJSON<T>(
       try {
         const texto = await llamarProxy(apiKey, actual, prompt, schema);
         if (actual !== modelo)
-          console.info(`Job Manager: ${modelo} no respondía; se usó ${actual}.`);
-        return JSON.parse(texto) as T;
+          emitir({ tipo: "respaldo", modeloOriginal: modelo, modeloUsado: actual });
+        const dato = JSON.parse(texto) as T;
+        emitir({ tipo: "exito" });
+        return dato;
       } catch (e) {
         ultimo = e;
         const clase = clasificar(e);
-        if (clase === "fatal" || clase === "cuotaDiaria")
-          throw e instanceof ErrorGemini ? e : traducirError(e);
+        if (clase === "fatal" || clase === "cuotaDiaria") {
+          const err = e instanceof ErrorGemini ? e : traducirError(e);
+          emitir({ tipo: "fallo", mensaje: err.message });
+          throw err;
+        }
         // El límite por minuto se reintenta menos veces: cada espera es larga.
         const tope = clase === "limitePorMinuto" ? 2 : REINTENTOS;
         if (intento >= tope) break;
-        await dormir(esperaDe(clase, intento));
+        const espera = esperaDe(clase, intento);
+        emitir({
+          tipo: "reintento",
+          intento: intento + 1,
+          tope,
+          esperaMs: espera,
+          motivo: MOTIVOS[clase] ?? clase,
+        });
+        await dormir(espera);
       }
     }
   }
 
-  if (ultimo instanceof ErrorGemini) throw ultimo;
-  if (ultimo instanceof SyntaxError)
-    throw new ErrorGemini(
-      "Gemini devolvió un JSON malformado varias veces seguidas. Reintenta en un momento."
-    );
-  throw traducirError(ultimo);
+  const fallo =
+    ultimo instanceof ErrorGemini
+      ? ultimo
+      : ultimo instanceof SyntaxError
+        ? new ErrorGemini(
+            "Gemini devolvió un JSON malformado varias veces seguidas. Reintenta en un momento."
+          )
+        : traducirError(ultimo);
+  emitir({ tipo: "fallo", mensaje: fallo.message });
+  throw fallo;
 }
 
 // ---------------------------------------------------------------- esquemas

@@ -34,6 +34,8 @@ export default function Buscar() {
   const [puntajes, setPuntajes] = useState<Record<string, { puntaje: number; motivo: string }>>({});
   const [buscando, setBuscando] = useState(false);
   const [triando, setTriando] = useState(false);
+  // Cuántas se han puntuado ya, para que el lote no parezca colgado.
+  const [progreso, setProgreso] = useState({ hechas: 0, total: 0 });
   const [error, setError] = useState("");
   const [fallos, setFallos] = useState<{ fuente: string; error: string }[]>([]);
   const [soloBuenas, setSoloBuenas] = useState(false);
@@ -89,6 +91,7 @@ export default function Buscar() {
     try {
       // En tandas de 15 para no reventar el contexto ni la cuota de una vez.
       const pendientes = resultados.filter((v) => !puntajes[v.id]).slice(0, 60);
+      setProgreso({ hechas: 0, total: pendientes.length });
       for (let i = 0; i < pendientes.length; i += 15) {
         const tanda = pendientes.slice(i, i + 15);
         const res = await triarLote(
@@ -107,6 +110,7 @@ export default function Buscar() {
           for (const r of res) sig[r.id] = { puntaje: r.puntaje, motivo: r.motivo };
           return sig;
         });
+        setProgreso((p) => ({ ...p, hechas: Math.min(i + tanda.length, p.total) }));
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -250,13 +254,33 @@ export default function Buscar() {
             </button>
             <button className="btn btn-primario" onClick={triar} disabled={triando}>
               <Sparkles size={15} />
-              {triando ? "Puntuando…" : "Puntuar encaje con IA"}
+              {triando
+                ? progreso.total
+                  ? `Puntuando ${progreso.hechas} de ${progreso.total}…`
+                  : "Puntuando…"
+                : "Puntuar encaje con IA"}
             </button>
           </div>
 
           {triando && (
-            <div className="panel px-4 py-3">
-              <Cargando texto="Evaluando el lote contra tu perfil. Puede tardar según cuántas haya." />
+            <div className="panel space-y-2 px-4 py-3">
+              <Cargando
+                texto={
+                  progreso.total
+                    ? `Evaluando ${progreso.hechas} de ${progreso.total} vacantes contra tu perfil…`
+                    : "Preparando el lote…"
+                }
+              />
+              {progreso.total > 0 && (
+                <div className="h-1.5 overflow-hidden rounded-full bg-[var(--color-borde)]">
+                  <div
+                    className="h-full rounded-full bg-[var(--color-acento)] transition-all duration-500"
+                    style={{
+                      width: `${Math.round((progreso.hechas / progreso.total) * 100)}%`,
+                    }}
+                  />
+                </div>
+              )}
             </div>
           )}
 

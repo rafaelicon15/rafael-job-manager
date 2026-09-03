@@ -134,6 +134,23 @@ Los ATS leen la **capa de texto** del PDF. Un CV bonito exportado como imagen
 blanco. Por eso el generador usa jsPDF escribiendo texto real, una sola columna,
 fuente estándar, sin tablas, sin cajas de texto y sin encabezados ni pies.
 
+### Cómo la app cuenta lo que está haciendo
+
+Los tres estados básicos están en `components/ui.tsx` y se usan en toda la app:
+`Cargando` (carga), `Alerta` (errores y avisos, en cuatro variantes) y `Vacio`
+(estado vacío con acción sugerida). Encima de eso:
+
+- **`AvisosMotor`** se monta una vez en el layout y escucha los eventos del
+  motor, así que los fallos se ven aunque hayas hecho scroll o estés en otra
+  pestaña de la ficha. Lo importante son los **reintentos**: en el plan gratuito
+  de Gemini pueden sumar 45 segundos y sin aviso parece que la app se colgó.
+  El toast dice el motivo, el intento y la cuenta atrás.
+- **`app/error.tsx`** y **`app/global-error.tsx`** capturan cualquier excepción
+  y ofrecen reintentar, en vez de dejar la pantalla de error genérica de Next.
+- **`app/not-found.tsx`** para enlaces roídos a vacantes ya eliminadas.
+- El triaje por lotes muestra **barra de progreso** ("Evaluando 30 de 60"),
+  porque son varias llamadas seguidas que pueden tardar minutos.
+
 ### Por qué Gemini se llama desde el servidor
 
 La API de Gemini está restringida geográficamente y responde

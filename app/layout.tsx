@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ProveedorApp } from "@/lib/contexto";
 import Navegacion from "@/components/Navegacion";
+import AvisosMotor from "@/components/AvisosMotor";
 
 export const metadata: Metadata = {
   title: "Job Manager — Rafael Licón",
@@ -31,6 +32,7 @@ export default function RootLayout({
               {children}
             </main>
           </div>
+          <AvisosMotor />
         </ProveedorApp>
       </body>
     </html>
