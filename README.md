@@ -5,6 +5,8 @@ notas: es un analizador que cruza cada oferta contra un perfil maestro
 verificable, genera un CV adaptado que atraviesa filtros ATS y redacta las
 respuestas al reclutador en primera persona.
 
+Guía de puesta en marcha paso a paso: **[DESPLIEGUE.md](DESPLIEGUE.md)**.
+
 El motor es **Google Gemini**. Los datos viven en el navegador. Nada se guarda
 en ningún servidor.
 
