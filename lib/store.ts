@@ -3,9 +3,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type {
   Ajustes,
+  Conversacion,
   DocumentoGenerado,
   EstadoApp,
   EstadoVacante,
+  Mensaje,
   PerfilMaestro,
   Vacante,
 } from "./types";
@@ -22,6 +24,7 @@ function hidratar(crudo: string | null): EstadoApp {
       version: ESTADO_INICIAL.version,
       perfil: { ...ESTADO_INICIAL.perfil, ...(guardado.perfil ?? {}) },
       vacantes: guardado.vacantes ?? [],
+      conversaciones: guardado.conversaciones ?? [],
       ajustes: { ...ESTADO_INICIAL.ajustes, ...(guardado.ajustes ?? {}) },
     };
   } catch {
@@ -169,6 +172,103 @@ export function useEstado() {
     }));
   }, []);
 
+  // ------------------------------------------------------- conversaciones
+
+  const agregarConversacion = useCallback(
+    (
+      c: Partial<Conversacion> &
+        Pick<Conversacion, "canal" | "contacto" | "mensajes">
+    ) => {
+      const ahora = new Date().toISOString();
+      const conv: Conversacion = {
+        id: nuevoId("conv"),
+        asunto: "",
+        archivada: false,
+        pendientes: [],
+        preguntasSinResponder: [],
+        incoherencias: [],
+        creadaEn: ahora,
+        actualizadaEn: ahora,
+        ...c,
+      };
+      setEstado((s) => ({ ...s, conversaciones: [conv, ...s.conversaciones] }));
+      return conv;
+    },
+    []
+  );
+
+  const actualizarConversacion = useCallback(
+    (id: string, parcial: Partial<Conversacion>) => {
+      setEstado((s) => ({
+        ...s,
+        conversaciones: s.conversaciones.map((c) =>
+          c.id === id
+            ? { ...c, ...parcial, actualizadaEn: new Date().toISOString() }
+            : c
+        ),
+      }));
+    },
+    []
+  );
+
+  const borrarConversacion = useCallback((id: string) => {
+    setEstado((s) => ({
+      ...s,
+      conversaciones: s.conversaciones.filter((c) => c.id !== id),
+    }));
+  }, []);
+
+  const agregarMensaje = useCallback(
+    (idConv: string, m: Omit<Mensaje, "id">) => {
+      const mensaje: Mensaje = { ...m, id: nuevoId("msg") };
+      setEstado((s) => ({
+        ...s,
+        conversaciones: s.conversaciones.map((c) =>
+          c.id === idConv
+            ? {
+                ...c,
+                mensajes: [...c.mensajes, mensaje],
+                actualizadaEn: new Date().toISOString(),
+              }
+            : c
+        ),
+      }));
+      return mensaje;
+    },
+    []
+  );
+
+  const actualizarMensaje = useCallback(
+    (idConv: string, idMsg: string, parcial: Partial<Mensaje>) => {
+      setEstado((s) => ({
+        ...s,
+        conversaciones: s.conversaciones.map((c) =>
+          c.id === idConv
+            ? {
+                ...c,
+                mensajes: c.mensajes.map((m) =>
+                  m.id === idMsg ? { ...m, ...parcial } : m
+                ),
+                actualizadaEn: new Date().toISOString(),
+              }
+            : c
+        ),
+      }));
+    },
+    []
+  );
+
+  const borrarMensaje = useCallback((idConv: string, idMsg: string) => {
+    setEstado((s) => ({
+      ...s,
+      conversaciones: s.conversaciones.map((c) =>
+        c.id === idConv
+          ? { ...c, mensajes: c.mensajes.filter((m) => m.id !== idMsg) }
+          : c
+      ),
+    }));
+  }, []);
+
   const exportar = useCallback(() => {
     const blob = new Blob([JSON.stringify(estado, null, 2)], {
       type: "application/json",
@@ -210,6 +310,12 @@ export function useEstado() {
     cambiarEstadoVacante,
     agregarDocumento,
     borrarDocumento,
+    agregarConversacion,
+    actualizarConversacion,
+    borrarConversacion,
+    agregarMensaje,
+    actualizarMensaje,
+    borrarMensaje,
     exportar,
     importar,
     diasSinRespaldo,

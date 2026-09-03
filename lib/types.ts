@@ -161,6 +161,68 @@ export interface Vacante {
   notas: { id: string; texto: string; fecha: string }[];
 }
 
+export type Canal = "linkedin" | "email" | "whatsapp" | "otro";
+
+export const CANALES: { id: Canal; label: string }[] = [
+  { id: "linkedin", label: "LinkedIn" },
+  { id: "email", label: "Correo" },
+  { id: "whatsapp", label: "WhatsApp" },
+  { id: "otro", label: "Otro" },
+];
+
+export interface Mensaje {
+  id: string;
+  /** Quién habla: el reclutador o Rafael. */
+  de: "ellos" | "yo";
+  texto: string;
+  /** Fecha en ISO, o el sello que venía en el chat si no se pudo normalizar. */
+  fecha: string;
+  /** true cuando el mensaje se generó con el motor y aún no se ha enviado. */
+  borrador?: boolean;
+}
+
+/** Algo que el reclutador pidió y sigue sin hacerse. */
+export interface Pendiente {
+  id: string;
+  que: string;
+  hecho: boolean;
+  cuando?: string;
+}
+
+/**
+ * Una afirmación hecha en el hilo que el perfil maestro no respalda.
+ * Es la red de seguridad contra prometer en un chat algo que no puedes
+ * sostener en la entrevista.
+ */
+export interface Incoherencia {
+  afirmacion: string;
+  problema: string;
+  comoCorregir: string;
+}
+
+export interface Conversacion {
+  id: string;
+  canal: Canal;
+  asunto: string;
+  contacto: {
+    nombre: string;
+    cargo?: string;
+    empresa?: string;
+    /** Perfil de LinkedIn, correo o número, según el canal. */
+    handle?: string;
+  };
+  mensajes: Mensaje[];
+  /** Vacante enlazada, si la hay. */
+  vacanteId?: string;
+  archivada: boolean;
+  pendientes: Pendiente[];
+  /** Preguntas que hiciste y que todavía no te han respondido. */
+  preguntasSinResponder: string[];
+  incoherencias: Incoherencia[];
+  creadaEn: string;
+  actualizadaEn: string;
+}
+
 export interface Ajustes {
   geminiApiKey: string;
   modelo: string;
@@ -176,5 +238,6 @@ export interface EstadoApp {
   version: number;
   perfil: PerfilMaestro;
   vacantes: Vacante[];
+  conversaciones: Conversacion[];
   ajustes: Ajustes;
 }

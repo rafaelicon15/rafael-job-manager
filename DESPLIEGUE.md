@@ -163,6 +163,22 @@ Cuando los tengas, el aviso amarillo desaparece.
    - **Respuestas** → pega cada pregunta del formulario y copia la respuesta.
 3. Postula en el portal y cambia el estado a **Postulada**. El sistema te crea
    solo un seguimiento a 6 días, que verás en el Panel.
+
+Cuando la vacante llega por **mensaje** en vez de por portal:
+
+1. **Conversaciones → Nueva conversación** → elige el canal (LinkedIn, correo,
+   WhatsApp) y pega el hilo entero, sucio, tal como está.
+2. El motor separa quién dijo qué, identifica al reclutador y, si el mensaje
+   trae la oferta descrita, **registra la vacante y la enlaza sola**.
+3. En el hilo revisa los tres avisos antes de responder:
+   - **Afirmaciones que tu perfil no respalda** (rojo): lo que dijiste y no
+     puedes sostener. Añádelo al perfil si es cierto, o usa la reformulación
+     que te propone.
+   - **Te lo pidieron y falta hacerlo**: la lista de lo que esperan de ti.
+   - **Preguntas tuyas que esquivaron**: vuelve a plantearlas antes de invertir
+     más tiempo en el proceso.
+4. **Redactar como yo** → copia → envía → **Marcar como enviada** para que
+   quede en el hilo.
 4. **Respalda una vez por semana**: Ajustes → **Descargar respaldo**.
 
 ---

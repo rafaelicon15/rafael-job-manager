@@ -21,6 +21,7 @@ en ningún servidor.
 | **Ficha de vacante** | Análisis de encaje requisito por requisito, brechas con mitigación, keywords ATS, banderas rojas de la oferta y preguntas para el reclutador. |
 | **CV a medida** | Reescribe y reordena tus logros reales para esa oferta y exporta un PDF ATS-friendly en español o inglés. |
 | **Respuestas** | Cualquier pregunta de formulario o de reclutador, respondida como tú, con variantes cortas para campos con límite de caracteres. |
+| **Conversaciones** | Las vacantes que llegan por mensaje. Pega el hilo de LinkedIn, correo o WhatsApp, enlázalo con una vacante y responde desde ahí. Detecta lo que te pidieron y no has hecho, las preguntas tuyas que esquivaron, y las afirmaciones del hilo que tu perfil no respalda. |
 | **Perfil maestro** | La única fuente de verdad. Si un hecho no está aquí, el motor no puede afirmarlo. |
 | **Extensión de Chrome** | Captura la oferta que tienes abierta en LinkedIn, Computrabajo, InfoJobs o Indeed y la manda al panel con un clic. |
 
@@ -37,6 +38,9 @@ El sistema está diseñado para ser **persuasivo sin mentir**:
   experiencia experta.
 - Cuando falta un dato (tu nivel de inglés, una expectativa salarial), el motor
   deja un marcador `[COMPLETAR: …]` en vez de improvisar.
+- En **Conversaciones** revisa lo que tú mismo escribiste en el hilo y marca en
+  rojo cualquier cosa que hayas afirmado y el perfil no sostenga, con la
+  reformulación honesta lista para la entrevista.
 
 ---
 
@@ -102,6 +106,8 @@ app/
   buscar/               Agregador de vacantes + triaje con IA
   vacantes/             Lista y tablero de postulaciones
   vacantes/[id]/        Ficha: análisis, CV, respuestas, oferta, notas
+  conversaciones/       Bandeja de hilos con reclutadores
+  conversaciones/[id]/  Hilo: mensajes, vacante enlazada, redacción de respuesta
   asistente/            Respuestas y mensajes sin vacante asociada
   perfil/               Editor del perfil maestro
   ajustes/              Claves, modelo, respaldos

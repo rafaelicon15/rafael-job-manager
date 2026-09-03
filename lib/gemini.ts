@@ -1,13 +1,22 @@
 "use client";
 
 import { GoogleGenAI, Type } from "@google/genai";
-import type { Analisis, Idioma, PerfilMaestro, Vacante } from "./types";
+import type {
+  Analisis,
+  Conversacion,
+  Idioma,
+  Incoherencia,
+  PerfilMaestro,
+  Vacante,
+} from "./types";
 import {
   promptAnalizar,
   promptCV,
   promptParsearVacante,
   promptRespuesta,
   promptTriaje,
+  promptParsearConversacion,
+  promptHilo,
 } from "./prompts";
 
 export const MODELOS = [
@@ -372,4 +381,155 @@ export async function triarLote(
     resultados: { id: string; puntaje: number; motivo: string }[];
   }>(apiKey, modelo, promptTriaje(perfil, lote), esquemaTriaje);
   return r.resultados;
+}
+
+// ------------------------------------------------------- conversaciones
+
+const esquemaConversacion = {
+  type: S.OBJECT,
+  properties: {
+    asunto: { type: S.STRING },
+    contacto: {
+      type: S.OBJECT,
+      properties: {
+        nombre: { type: S.STRING },
+        cargo: { type: S.STRING },
+        empresa: { type: S.STRING },
+        handle: { type: S.STRING },
+      },
+      required: ["nombre"],
+    },
+    mensajes: {
+      type: S.ARRAY,
+      items: {
+        type: S.OBJECT,
+        properties: {
+          de: { type: S.STRING, enum: ["ellos", "yo"] },
+          texto: { type: S.STRING },
+          fecha: { type: S.STRING },
+        },
+        required: ["de", "texto", "fecha"],
+      },
+    },
+    contieneOferta: { type: S.BOOLEAN },
+    ofertaDetectada: {
+      type: S.OBJECT,
+      properties: {
+        titulo: { type: S.STRING },
+        empresa: { type: S.STRING },
+        ubicacion: { type: S.STRING },
+        modalidad: { type: S.STRING },
+        salario: { type: S.STRING },
+        descripcion: { type: S.STRING },
+      },
+      required: ["titulo", "empresa", "descripcion"],
+    },
+  },
+  required: ["asunto", "contacto", "mensajes", "contieneOferta", "ofertaDetectada"],
+};
+
+const esquemaHilo = {
+  type: S.OBJECT,
+  properties: {
+    respuesta: { type: S.STRING },
+    asunto: { type: S.STRING },
+    variantes: listaTexto,
+    pendientes: listaTexto,
+    preguntasSinResponder: listaTexto,
+    incoherencias: {
+      type: S.ARRAY,
+      items: {
+        type: S.OBJECT,
+        properties: {
+          afirmacion: { type: S.STRING },
+          problema: { type: S.STRING },
+          comoCorregir: { type: S.STRING },
+        },
+        required: ["afirmacion", "problema", "comoCorregir"],
+      },
+    },
+    avisos: listaTexto,
+  },
+  required: [
+    "respuesta",
+    "asunto",
+    "variantes",
+    "pendientes",
+    "preguntasSinResponder",
+    "incoherencias",
+    "avisos",
+  ],
+};
+
+export interface ConversacionParseada {
+  asunto: string;
+  contacto: { nombre: string; cargo?: string; empresa?: string; handle?: string };
+  mensajes: { de: "ellos" | "yo"; texto: string; fecha: string }[];
+  contieneOferta: boolean;
+  ofertaDetectada: VacanteParseada & {
+    ubicacion?: string;
+    modalidad?: string;
+    salario?: string;
+  };
+}
+
+export interface RespuestaHilo {
+  respuesta: string;
+  asunto: string;
+  variantes: string[];
+  pendientes: string[];
+  preguntasSinResponder: string[];
+  incoherencias: Incoherencia[];
+  avisos: string[];
+}
+
+export function parsearConversacion(
+  apiKey: string,
+  modelo: string,
+  textoCrudo: string,
+  canal: string
+) {
+  return generarJSON<ConversacionParseada>(
+    apiKey,
+    modelo,
+    promptParsearConversacion(textoCrudo, canal),
+    esquemaConversacion
+  );
+}
+
+export function redactarEnHilo(
+  apiKey: string,
+  modelo: string,
+  perfil: PerfilMaestro,
+  conversacion: Conversacion,
+  vacante: Vacante | undefined,
+  instrucciones: string,
+  idioma: Idioma,
+  tono: string
+) {
+  const contacto = [
+    conversacion.contacto.nombre,
+    conversacion.contacto.cargo,
+    conversacion.contacto.empresa,
+  ]
+    .filter(Boolean)
+    .join(" — ");
+  return generarJSON<RespuestaHilo>(
+    apiKey,
+    modelo,
+    promptHilo(
+      perfil,
+      conversacion.canal,
+      contacto || "Reclutador",
+      // Los borradores sin enviar no son parte del hilo real.
+      conversacion.mensajes
+        .filter((m) => !m.borrador)
+        .map((m) => ({ de: m.de, texto: m.texto, fecha: m.fecha })),
+      vacante,
+      instrucciones,
+      idioma,
+      tono
+    ),
+    esquemaHilo
+  );
 }

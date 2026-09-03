@@ -44,6 +44,9 @@ export default function FichaVacante({
   const [nota, setNota] = useState("");
 
   const vacante = estado.vacantes.find((v) => v.id === id);
+  const conversacionesLigadas = estado.conversaciones.filter(
+    (c) => c.vacanteId === id
+  );
 
   if (!listo) return <p className="text-sm text-[var(--color-suave)]">Cargando…</p>;
 
@@ -148,6 +151,21 @@ export default function FichaVacante({
             </div>
           </div>
         </div>
+
+        {conversacionesLigadas.length > 0 && (
+          <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--color-borde)] pt-4">
+            <span className="etiqueta mb-0">Conversaciones</span>
+            {conversacionesLigadas.map((c) => (
+              <Link
+                key={c.id}
+                href={`/conversaciones/${c.id}`}
+                className="chip transition hover:border-[var(--color-acento)]"
+              >
+                <MessagesSquare size={12} /> {c.contacto.nombre} · {c.mensajes.length} mensajes
+              </Link>
+            ))}
+          </div>
+        )}
 
         {vacante.proximaAccion && (
           <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[var(--color-borde)] pt-4">

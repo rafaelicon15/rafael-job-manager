@@ -6,6 +6,7 @@ import {
   ArrowRight,
   CalendarClock,
   Download,
+  Inbox,
   KeyRound,
   Plus,
   Radar,
@@ -42,6 +43,15 @@ export default function Panel() {
         .sort((a, b) => (b.analisis?.puntaje ?? -1) - (a.analisis?.puntaje ?? -1))
         .slice(0, 6),
     [vacantes]
+  );
+
+  // El último mensaje lo escribió el reclutador: la pelota está en tu tejado.
+  const esperandoRespuesta = useMemo(
+    () =>
+      estado.conversaciones
+        .filter((c) => !c.archivada && c.mensajes.at(-1)?.de === "ellos")
+        .sort((a, b) => b.actualizadaEn.localeCompare(a.actualizadaEn)),
+    [estado.conversaciones]
   );
 
   const acciones = useMemo(
@@ -108,7 +118,7 @@ export default function Panel() {
         </Alerta>
       )}
 
-      <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <section className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         <Tarjeta titulo="Vacantes guardadas" valor={m.total} />
         <Tarjeta titulo="Postulaciones enviadas" valor={m.enviadas} />
         <Tarjeta
@@ -116,6 +126,11 @@ export default function Panel() {
           valor={`${m.tasa}%`}
           detalle={`${m.conRespuesta} de ${m.enviadas}`}
           acento={m.tasa >= 15 ? "text-emerald-300" : undefined}
+        />
+        <Tarjeta
+          titulo="Esperan tu respuesta"
+          valor={esperandoRespuesta.length}
+          acento={esperandoRespuesta.length ? "text-amber-300" : undefined}
         />
         <Tarjeta
           titulo="En entrevista u oferta"
@@ -243,6 +258,32 @@ export default function Panel() {
               })}
             </ul>
           )}
+          {esperandoRespuesta.length > 0 && (
+            <div className="mt-5 border-t border-[var(--color-borde)] pt-4">
+              <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-300">
+                <Inbox size={15} /> Te toca responder
+              </h3>
+              <ul className="space-y-2">
+                {esperandoRespuesta.slice(0, 5).map((c) => (
+                  <li key={c.id}>
+                    <Link
+                      href={`/conversaciones/${c.id}`}
+                      className="panel block px-3.5 py-2.5 transition hover:border-[var(--color-acento)]"
+                    >
+                      <span className="block truncate text-sm font-semibold">
+                        {c.contacto.nombre}
+                        {c.contacto.empresa ? ` · ${c.contacto.empresa}` : ""}
+                      </span>
+                      <span className="mt-0.5 block truncate text-xs text-[var(--color-suave)]">
+                        {c.mensajes.at(-1)?.texto.slice(0, 90)}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {vacantes.length > 0 && (
             <button onClick={exportar} className="btn mt-4 w-full">
               <Download size={15} /> Descargar respaldo (.json)

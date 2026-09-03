@@ -236,3 +236,88 @@ Penaliza duro: puestos presenciales fuera de Venezuela, roles senior de ingenier
 LOTE:
 ${lote.map((j) => `[${j.id}] ${j.titulo} — ${j.empresa}\n${j.extracto.slice(0, 900)}`).join("\n\n---\n\n")}`;
 }
+
+// ------------------------------------------------------- conversaciones
+
+export function promptParsearConversacion(
+  textoCrudo: string,
+  canal: string
+): string {
+  return `Eres un extractor de datos. Recibes una conversación con un reclutador copiada en bruto desde ${canal}. Puede venir sucia: marcas de tiempo, enlaces de perfil, "ha enviado el siguiente mensaje a las 11:05", firmas, avisos de la plataforma.
+
+Tu trabajo es reconstruir el hilo:
+
+1. Identifica quién es el reclutador (nombre, cargo y empresa si aparecen) y su handle (URL de LinkedIn, correo o teléfono, según el canal).
+2. Separa la conversación en mensajes individuales, en ORDEN CRONOLÓGICO (el más antiguo primero).
+3. Para cada mensaje marca "de": "ellos" si lo escribió el reclutador, "yo" si lo escribió el candidato. El candidato es la persona que se postula; el reclutador es quien ofrece el puesto.
+4. En "fecha" copia el sello temporal tal como aparece ("3:58", "Hoy 11:05", "17:23"). Si no hay, deja cadena vacía. NO inventes fechas.
+5. Limpia cada mensaje: quita marcas de la plataforma y enlaces rotos, pero NO resumas ni reescribas el contenido. El texto debe quedar tal como se escribió.
+6. "asunto": una etiqueta corta que identifique el hilo, del tipo "Growth Specialist — Grupo Index".
+7. "contieneOferta": true si en algún mensaje viene descrita una vacante concreta (responsabilidades, requisitos o condiciones). Si es así, rellena "ofertaDetectada" reconstruyendo la oferta completa a partir de lo que dice el reclutador; si no, deja "ofertaDetectada" con cadenas vacías.
+
+CONVERSACIÓN EN BRUTO:
+"""
+${textoCrudo.slice(0, 60000)}
+"""`;
+}
+
+export function promptHilo(
+  p: PerfilMaestro,
+  canal: string,
+  contacto: string,
+  hilo: { de: string; texto: string; fecha: string }[],
+  vacante: Vacante | undefined,
+  instrucciones: string,
+  idioma: Idioma,
+  tono: string
+): string {
+  const lang = idioma === "en" ? "inglés" : "español";
+  const limites: Record<string, string> = {
+    linkedin:
+      "LinkedIn: sin asunto, saludo corto por el nombre de pila, párrafos breves. Lo ideal son 80-160 palabras; nadie lee un muro de texto en un chat.",
+    email:
+      "Correo: incluye una línea de asunto en el campo 'asunto'. Estructura de email formal pero directa, con despedida y firma.",
+    whatsapp:
+      "WhatsApp: muy breve y conversacional, 40-90 palabras. Frases cortas, sin lenguaje corporativo, sin firma. Se puede partir en 2 mensajes si conviene.",
+    otro: "Formato neutro, breve y profesional.",
+  };
+
+  return `Escribes EN PRIMERA PERSONA COMO SI FUERAS ${p.nombre}. Eres él respondiendo por ${canal}. No hables de él en tercera persona.
+
+${perfilComoTexto(p)}
+
+${reglasDeHonestidad(p)}
+
+${vacante ? `VACANTE ENLAZADA A ESTE HILO
+  Puesto: ${vacante.titulo} — ${vacante.empresa}
+  Modalidad: ${vacante.modalidad} | Ubicación: ${vacante.ubicacion} | Salario: ${vacante.salario || "no publicado"}
+  Descripción:
+  """
+  ${vacante.descripcion.slice(0, 18000)}
+  """
+${vacante.analisis ? `  Ángulo a vender: ${vacante.analisis.anguloRecomendado}
+  Brechas conocidas: ${vacante.analisis.brechas.map((b) => `${b.brecha} → ${b.mitigacion}`).join(" | ")}
+  Banderas rojas detectadas: ${vacante.analisis.banderasRojas.join(" | ") || "ninguna"}` : ""}` : "No hay ninguna vacante enlazada a este hilo todavía."}
+
+INTERLOCUTOR: ${contacto}
+
+HILO COMPLETO, del más antiguo al más reciente:
+${hilo.map((m, i) => `[${i + 1}] ${m.de === "yo" ? p.nombre.split(" ")[0].toUpperCase() : "RECLUTADOR"}${m.fecha ? ` (${m.fecha})` : ""}:\n${m.texto}`).join("\n\n")}
+
+${instrucciones ? `LO QUE RAFAEL QUIERE QUE DIGAS O CONSIGAS EN ESTE MENSAJE:\n"""\n${instrucciones}\n"""` : "No hay instrucción específica: responde a lo último que dijo el reclutador y haz avanzar el proceso."}
+
+Devuelve el JSON pedido. Instrucciones por campo:
+
+- respuesta: el mensaje listo para enviar, en ${lang}, tono ${tono}. ${limites[canal] ?? limites.otro}
+  * Responde primero a lo que te acaban de preguntar. Nada de recapitular todo el hilo.
+  * Si el reclutador dejó SIN RESPONDER una pregunta que Rafael ya hizo antes, vuelve a plantearla una sola vez, de forma cortés pero clara, dando una razón por la que la necesitas.
+  * Si te piden algo concreto (enviar CV, confirmar una hora), confírmalo de forma explícita.
+  * Si hay que confirmar una cita con hora en otro país, convierte la hora también a la de Rafael (${p.ubicacion}) para dejar constancia de que no hay malentendido.
+  * Si un dato no está en el perfil, usa un marcador [COMPLETAR: …]. NO lo inventes.
+- asunto: solo si el canal es "email"; en el resto devuelve cadena vacía.
+- variantes: 2 versiones alternativas, una más corta y una más formal.
+- pendientes: lo que el reclutador ha pedido en el hilo y todavía no consta que se haya hecho (enviar CV, mandar portafolio, rellenar un formulario, confirmar disponibilidad). Frases accionables que empiecen por verbo.
+- preguntasSinResponder: preguntas que RAFAEL hizo en el hilo y que el reclutador aún no ha contestado. Vacío si no hay ninguna.
+- incoherencias: ESTA ES LA PARTE MÁS IMPORTANTE. Revisa todo lo que Rafael afirmó en sus propios mensajes del hilo y compáralo con el PERFIL. Marca cualquier afirmación que el perfil NO respalde: una herramienta que dijo dominar y que no está en Habilidades, un nivel de experiencia inflado, una métrica que no existe en sus logros, un idioma sin declarar. Para cada una: la afirmación literal, por qué es un problema, y cómo reencuadrarla de forma honesta si se lo preguntan. Si todo cuadra con el perfil, devuelve lista vacía. NO inventes incoherencias para rellenar.
+- avisos: cualquier otra cosa que Rafael deba revisar antes de enviar.`;
+}

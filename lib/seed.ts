@@ -539,5 +539,6 @@ export const ESTADO_INICIAL: EstadoApp = {
   version: 1,
   perfil: PERFIL_INICIAL,
   vacantes: [],
+  conversaciones: [],
   ajustes: AJUSTES_INICIALES,
 };
