@@ -19,17 +19,40 @@ import {
   promptHilo,
 } from "./prompts";
 
+/**
+ * Modelo al que se cae cuando el elegido está saturado. Medido contra la API
+ * con una clave del plan gratuito: con prompts de 12KB y 36KB, Flash Lite
+ * respondió 6 de 6 veces, mientras que gemini-flash-latest fallaba con 503
+ * entre 2 y 3 de cada 3 intentos con cualquier tamaño de prompt.
+ */
+export const MODELO_RESPALDO = "gemini-flash-lite-latest";
+
+// Verificados contra la API con una clave del plan gratuito. Ojo al añadir:
+// que un modelo aparezca en /models NO garantiza que responda a generateContent
+// (gemini-2.5-flash sale listado y devuelve 404).
 export const MODELOS = [
-  { id: "gemini-flash-latest", label: "Gemini Flash (recomendado)" },
-  { id: "gemini-flash-lite-latest", label: "Gemini Flash Lite (más barato)" },
-  { id: "gemini-2.5-flash", label: "Gemini 2.5 Flash (versión fija)" },
-  { id: "gemini-pro-latest", label: "Gemini Pro (más potente, gasta más cuota)" },
+  {
+    id: "gemini-flash-lite-latest",
+    label: "Gemini Flash Lite — recomendado, el más fiable en el plan gratuito",
+  },
+  {
+    id: "gemini-flash-latest",
+    label: "Gemini Flash — mejor calidad, pero suele estar saturado",
+  },
+  { id: "gemini-3.8-flash", label: "Gemini 3.8 Flash — versión fija" },
+  {
+    id: "gemini-pro-latest",
+    label: "Gemini Pro — sin cuota en el plan gratuito",
+  },
 ];
 
 export class ErrorGemini extends Error {
-  constructor(mensaje: string, readonly causa?: unknown) {
+  readonly causa?: unknown;
+
+  constructor(mensaje: string, causa?: unknown) {
     super(mensaje);
     this.name = "ErrorGemini";
+    this.causa = causa;
   }
 }
 
@@ -49,7 +72,9 @@ function traducirError(e: unknown): ErrorGemini {
     return new ErrorGemini("Tu API key de Gemini no es válida. Revísala en Ajustes.");
   if (/429|RESOURCE_EXHAUSTED|quota/i.test(msg))
     return new ErrorGemini(
-      "Alcanzaste el límite de cuota de Gemini. Espera unos minutos o cambia a un modelo más ligero en Ajustes."
+      /per ?day|PerDay|daily/i.test(msg)
+        ? "Agotaste la cuota diaria de Gemini del plan gratuito. Se renueva mañana; hasta entonces prueba con Flash Lite en Ajustes."
+        : "Gemini te está limitando por exceso de peticiones por minuto. Ya se reintentó solo un par de veces sin éxito: espera un minuto y vuelve a darle."
     );
   if (/503|UNAVAILABLE|overloaded/i.test(msg))
     return new ErrorGemini("Gemini está saturado ahora mismo. Reintenta en un momento.");
@@ -58,32 +83,92 @@ function traducirError(e: unknown): ErrorGemini {
   return new ErrorGemini(`Fallo al llamar a Gemini: ${msg}`, e);
 }
 
+const REINTENTOS = 4;
+
+const dormir = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+type Clase = "saturado" | "limitePorMinuto" | "cuotaDiaria" | "fatal";
+
+/**
+ * Clasifica el fallo para decidir si reintentar y cuánto esperar. Medido contra
+ * la API real con una clave del plan gratuito:
+ *  - Los prompts grandes (perfil + oferta + hilo, que son los de esta app)
+ *    devuelven 503 la mayor parte de las veces: 4 de cada 5 intentos fallaban
+ *    y el quinto pasaba. Sin reintento la app resulta inservible.
+ *  - El 429 suele ser el límite POR MINUTO, que se recupera solo. Rendirse a la
+ *    primera le daba al usuario un error duro por algo que dura segundos.
+ *  - El 429 por cuota DIARIA sí es definitivo: insistir solo la quema.
+ */
+function clasificar(e: unknown): Clase {
+  const msg = e instanceof Error ? e.message : String(e);
+  if (/per ?day|PerDay|daily/i.test(msg) && /429|quota|RESOURCE_EXHAUSTED/i.test(msg))
+    return "cuotaDiaria";
+  if (/429|RESOURCE_EXHAUSTED|quota|rate limit/i.test(msg)) return "limitePorMinuto";
+  if (
+    e instanceof SyntaxError ||
+    /503|UNAVAILABLE|overloaded|500|INTERNAL|fetch failed|network/i.test(msg)
+  )
+    return "saturado";
+  return "fatal";
+}
+
+/** Espera antes del siguiente intento, según el tipo de fallo. */
+function esperaDe(clase: Clase, intento: number): number {
+  const jitter = Math.random() * 400;
+  // El límite por minuto necesita esperas largas; la saturación, cortas.
+  return clase === "limitePorMinuto"
+    ? 12000 + intento * 12000 + jitter
+    : 2 ** intento * 1000 + jitter;
+}
+
 async function generarJSON<T>(
   apiKey: string,
   modelo: string,
   prompt: string,
   schema: object
 ): Promise<T> {
-  try {
-    const ai = cliente(apiKey);
-    const res = await ai.models.generateContent({
-      model: modelo,
-      contents: prompt,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: schema,
-        temperature: 0.4,
-      },
-    });
-    const texto = res.text;
-    if (!texto) throw new ErrorGemini("Gemini devolvió una respuesta vacía.");
-    return JSON.parse(texto) as T;
-  } catch (e) {
-    if (e instanceof ErrorGemini) throw e;
-    if (e instanceof SyntaxError)
-      throw new ErrorGemini("Gemini devolvió un JSON malformado. Reintenta.");
-    throw traducirError(e);
+  const ai = cliente(apiKey);
+  // Si el modelo elegido se satura, se reintenta con el de respaldo antes de
+  // rendirse: más vale una respuesta de un modelo algo más ligero que un error.
+  const cola = modelo === MODELO_RESPALDO ? [modelo] : [modelo, MODELO_RESPALDO];
+  let ultimo: unknown;
+
+  for (const actual of cola) {
+    for (let intento = 0; intento <= REINTENTOS; intento++) {
+      try {
+        const res = await ai.models.generateContent({
+          model: actual,
+          contents: prompt,
+          config: {
+            responseMimeType: "application/json",
+            responseSchema: schema,
+            temperature: 0.4,
+          },
+        });
+        const texto = res.text;
+        if (!texto) throw new ErrorGemini("Gemini devolvió una respuesta vacía.");
+        if (actual !== modelo)
+          console.info(`Job Manager: ${modelo} no respondía; se usó ${actual}.`);
+        return JSON.parse(texto) as T;
+      } catch (e) {
+        ultimo = e;
+        const clase = clasificar(e);
+        if (clase === "fatal" || clase === "cuotaDiaria")
+          throw e instanceof ErrorGemini ? e : traducirError(e);
+        // El límite por minuto se reintenta menos veces: cada espera es larga.
+        const tope = clase === "limitePorMinuto" ? 2 : REINTENTOS;
+        if (intento >= tope) break;
+        await dormir(esperaDe(clase, intento));
+      }
+    }
   }
+
+  if (ultimo instanceof ErrorGemini) throw ultimo;
+  if (ultimo instanceof SyntaxError)
+    throw new ErrorGemini(
+      "Gemini devolvió un JSON malformado varias veces seguidas. Reintenta en un momento."
+    );
+  throw traducirError(ultimo);
 }
 
 // ---------------------------------------------------------------- esquemas

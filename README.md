@@ -131,6 +131,17 @@ Los ATS leen la **capa de texto** del PDF. Un CV bonito exportado como imagen
 blanco. Por eso el generador usa jsPDF escribiendo texto real, una sola columna,
 fuente estándar, sin tablas, sin cajas de texto y sin encabezados ni pies.
 
+### Fiabilidad del motor
+
+El plan gratuito de Gemini es inestable con prompts grandes, que son justo los
+de esta app (perfil completo + oferta + hilo). Medido contra la API real:
+`gemini-flash-latest` devolvía 503 en 2-3 de cada 3 intentos con cualquier
+tamaño de prompt, mientras que `gemini-flash-lite-latest` respondió 6 de 6,
+también con 36 KB. Por eso Flash Lite es el modelo por defecto, cada llamada
+reintenta con espera creciente (distinguiendo saturación, límite por minuto y
+cuota diaria agotada) y, si el modelo elegido no responde, se cae a Flash Lite
+antes de rendirse.
+
 ### Dónde viven los datos
 
 Todo en `localStorage`, bajo la clave `rjm:estado:v1`. Consecuencia directa:

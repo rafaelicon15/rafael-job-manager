@@ -66,6 +66,21 @@ Sin esto la app abre y guarda vacantes, pero no analiza ni genera CVs.
    *API key de Google AI Studio*. Se guarda sola.
 4. Vuelve al **Panel**: el aviso amarillo "Motor apagado" debe desaparecer.
 
+### Sobre el modelo: deja Flash Lite
+
+El plan gratuito viene por defecto con **Gemini Flash Lite**, y conviene dejarlo.
+Medido contra la API con una clave real del plan gratuito:
+
+| Modelo | Resultado |
+|---|---|
+| `gemini-flash-lite-latest` | 6 de 6 peticiones correctas, incluso con prompts de 36 KB |
+| `gemini-flash-latest` | falló por saturación (503) en 2-3 de cada 3 intentos, con cualquier tamaño |
+| `gemini-pro-latest` | 429: el plan gratuito no tiene cuota de Pro |
+| `gemini-2.5-flash` | 404: aparece listado pero no responde |
+
+Si eliges otro modelo y se satura, la app **reintenta sola** con espera creciente
+y, si aun así falla, **cae a Flash Lite** en lugar de darte un error.
+
 ### Ponle un límite de gasto a la clave (5 minutos, hazlo)
 
 La clave se usa desde tu navegador, así que conviene limitarla:

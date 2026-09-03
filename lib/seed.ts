@@ -527,8 +527,8 @@ export const PERFIL_INICIAL: PerfilMaestro = {
 
 export const AJUSTES_INICIALES: Ajustes = {
   geminiApiKey: "",
-  modelo: "gemini-flash-latest",
-  modeloGeneracion: "gemini-flash-latest",
+  modelo: "gemini-flash-lite-latest",
+  modeloGeneracion: "gemini-flash-lite-latest",
   adzunaAppId: "",
   adzunaAppKey: "",
   joobleKey: "",

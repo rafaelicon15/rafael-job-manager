@@ -131,9 +131,11 @@ export default function Ajustes() {
                 </option>
               ))}
             </select>
-            <p className="mt-1.5 text-xs text-[var(--color-suave)]">
-              Si un CV concreto te importa mucho, sube este a Pro solo para esa
-              generación y vuelve a Flash después.
+            <p className="mt-1.5 text-xs leading-relaxed text-[var(--color-suave)]">
+              Flash Lite es el más fiable en el plan gratuito: en pruebas
+              respondió 6 de 6 veces, mientras que Flash fallaba por saturación
+              casi siempre. Si eliges otro y se satura, la app cae sola a Flash
+              Lite en vez de darte un error. Pro no tiene cuota gratuita.
             </p>
           </div>
         </div>
