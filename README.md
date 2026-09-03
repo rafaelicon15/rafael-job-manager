@@ -1,0 +1,138 @@
+# Job Manager — Rafael Licón
+
+Panel personal para **buscar, evaluar y ganar vacantes**. No es un tablero de
+notas: es un analizador que cruza cada oferta contra un perfil maestro
+verificable, genera un CV adaptado que atraviesa filtros ATS y redacta las
+respuestas al reclutador en primera persona.
+
+El motor es **Google Gemini**. Los datos viven en el navegador. Nada se guarda
+en ningún servidor.
+
+---
+
+## Qué hace
+
+| Módulo | Para qué sirve |
+|---|---|
+| **Panel** | Embudo de postulaciones, tasa de respuesta y seguimientos vencidos. |
+| **Buscar vacantes** | Consulta 7 agregadores en paralelo y puntúa el encaje de cada oferta con IA antes de que pierdas tiempo leyendo. |
+| **Ficha de vacante** | Análisis de encaje requisito por requisito, brechas con mitigación, keywords ATS, banderas rojas de la oferta y preguntas para el reclutador. |
+| **CV a medida** | Reescribe y reordena tus logros reales para esa oferta y exporta un PDF ATS-friendly en español o inglés. |
+| **Respuestas** | Cualquier pregunta de formulario o de reclutador, respondida como tú, con variantes cortas para campos con límite de caracteres. |
+| **Perfil maestro** | La única fuente de verdad. Si un hecho no está aquí, el motor no puede afirmarlo. |
+| **Extensión de Chrome** | Captura la oferta que tienes abierta en LinkedIn, Computrabajo, InfoJobs o Indeed y la manda al panel con un clic. |
+
+### Cómo evita que te quemes en una entrevista
+
+El sistema está diseñado para ser **persuasivo sin mentir**:
+
+- El perfil maestro define **líneas rojas** que se inyectan en cada prompt
+  (no inventar empleadores, fechas, métricas, niveles de idioma ni herramientas).
+- Cada logro tiene un **id**. El motor debe declarar de qué id sale cada bullet
+  del CV, y la app **verifica que ese id exista**: si cita uno inventado, el
+  bullet se marca con un aviso en lugar de colarse en el PDF.
+- Las habilidades llevan **nivel 1-4**. Lo que marcas como 2 no se vende como
+  experiencia experta.
+- Cuando falta un dato (tu nivel de inglés, una expectativa salarial), el motor
+  deja un marcador `[COMPLETAR: …]` en vez de improvisar.
+
+---
+
+## Puesta en marcha
+
+### 1. API key de Gemini (obligatoria)
+
+Genera una gratis en [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+y pégala en **Ajustes**. Se guarda solo en tu navegador.
+
+> **Aviso de seguridad.** Esta app llama a Gemini desde el navegador, así que la
+> clave es visible para quien abra la consola en tu equipo. Es aceptable para
+> uso personal, pero conviene ponerle un límite de cuota desde Google Cloud y
+> no compartir el enlace con tu sesión iniciada.
+
+### 2. Fuentes de vacantes (opcional pero recomendable)
+
+Cinco fuentes funcionan sin configurar nada: Remotive, RemoteOK, Arbeitnow,
+Jobicy y WeWorkRemotely. Son casi todo remoto global en inglés.
+
+Para vacantes en español y ofertas no remotas, añade en **Ajustes**:
+
+- **Adzuna** — [developer.adzuna.com/signup](https://developer.adzuna.com/signup).
+  Gratis, sin tarjeta. Cubre España, EE. UU., Reino Unido, México y más.
+- **Jooble** — [jooble.org/api/about](https://jooble.org/api/about).
+  Cubre Venezuela y LatAm.
+
+### 3. Extensión de Chrome
+
+1. Abre `chrome://extensions` y activa **Modo de desarrollador**.
+2. Pulsa **Cargar descomprimida** y elige la carpeta `extension/`.
+3. Abre el popup de la extensión, pega la URL de tu panel y pulsa **Guardar URL**.
+
+Con eso, estando en cualquier oferta, un clic en **Capturar esta vacante** abre
+la ficha ya rellenada.
+
+La extensión **no inicia sesión ni postula por ti**: solo lee el texto de la
+pestaña que tú ya tienes abierta. Nada que viole los términos de servicio de
+LinkedIn o Computrabajo, y cero riesgo de que te baneen la cuenta.
+
+---
+
+## Desarrollo local
+
+```bash
+npm install
+npm run dev
+```
+
+Abre <http://localhost:3000>.
+
+```bash
+npm run build   # build de producción
+```
+
+---
+
+## Arquitectura
+
+```
+app/
+  page.tsx              Panel con KPIs y embudo
+  buscar/               Agregador de vacantes + triaje con IA
+  vacantes/             Lista y tablero de postulaciones
+  vacantes/[id]/        Ficha: análisis, CV, respuestas, oferta, notas
+  asistente/            Respuestas y mensajes sin vacante asociada
+  perfil/               Editor del perfil maestro
+  ajustes/              Claves, modelo, respaldos
+  capture/              Recibe las ofertas de la extensión
+  api/jobs/             Proxy servidor -> 7 agregadores (evita CORS)
+  api/extraer/          Descarga una URL de oferta y la pasa a texto plano
+lib/
+  types.ts              Modelo de datos
+  seed.ts               Perfil maestro precargado
+  store.ts              Estado en localStorage + respaldos
+  gemini.ts             Cliente de Gemini con salida estructurada
+  prompts.ts            Prompts y reglas de honestidad
+  pdf.ts                Generador de PDF ATS-friendly
+extension/              Extensión de Chrome (MV3)
+```
+
+### Por qué el PDF es así
+
+Los ATS leen la **capa de texto** del PDF. Un CV bonito exportado como imagen
+(lo que produce `html2canvas` y compañía) llega al reclutador como una página en
+blanco. Por eso el generador usa jsPDF escribiendo texto real, una sola columna,
+fuente estándar, sin tablas, sin cajas de texto y sin encabezados ni pies.
+
+### Dónde viven los datos
+
+Todo en `localStorage`, bajo la clave `rjm:estado:v1`. Consecuencia directa:
+**si limpias la caché del navegador, pierdes el historial.** Ajustes incluye
+exportar e importar un `.json`, y el panel te avisa si llevas más de una semana
+sin respaldar.
+
+---
+
+## Stack
+
+Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · Google Gemini
+(`@google/genai`) · jsPDF · lucide-react
