@@ -77,8 +77,13 @@ function traducirError(e: unknown): ErrorGemini {
         ? "Agotaste la cuota diaria de Gemini del plan gratuito. Se renueva mañana; hasta entonces prueba con Flash Lite en Ajustes."
         : "Gemini te está limitando por exceso de peticiones por minuto. Ya se reintentó solo un par de veces sin éxito: espera un minuto y vuelve a darle."
     );
-  if (/503|UNAVAILABLE|overloaded/i.test(msg))
-    return new ErrorGemini("Gemini está saturado ahora mismo. Reintenta en un momento.");
+  if (
+    /503|UNAVAILABLE|overloaded/i.test(msg) ||
+    /high demand|spikes? in demand|try again later/i.test(msg)
+  )
+    return new ErrorGemini(
+      "Gemini está saturado ahora mismo. La app ya reintentó varias veces sola; espera un minuto y vuelve a darle, o cambia a otro modelo en Ajustes."
+    );
   if (/FAILED_PRECONDITION|location is not supported/i.test(msg))
     return new ErrorGemini(
       "Google rechaza esta API key por restricción geográfica («User location is not supported»). La clave autentica, pero el proyecto de Google en el que la creaste está marcado en un país sin acceso a la API de Gemini. Crea la clave en un proyecto nuevo desde aistudio.google.com y comprueba el país de la cuenta."
@@ -149,7 +154,9 @@ function clasificar(e: unknown): Clase {
   if (/429|RESOURCE_EXHAUSTED|quota|rate limit/i.test(msg)) return "limitePorMinuto";
   if (
     e instanceof SyntaxError ||
-    /503|UNAVAILABLE|overloaded|500|INTERNAL|fetch failed|network/i.test(msg)
+    /503|UNAVAILABLE|overloaded|500|INTERNAL|fetch failed|network/i.test(msg) ||
+    // Visto en producción: Google devuelve la saturación en prosa, sin código.
+    /high demand|spikes? in demand|try again later|temporarily unavailable/i.test(msg)
   )
     return "saturado";
   return "fatal";
@@ -805,4 +812,42 @@ export function prepararEntrevista(
     promptEntrevista(perfil, vacante, idioma),
     esquemaEntrevista
   );
+}
+
+/**
+ * Comprobación en vivo de la clave. Devuelve un diagnóstico legible en vez de
+ * un booleano: con la restricción geográfica de Gemini, saber POR QUÉ falla es
+ * la diferencia entre arreglarlo en un minuto o pelearse una tarde.
+ */
+export async function probarClave(
+  apiKey: string,
+  modelo: string
+): Promise<{ ok: boolean; mensaje: string }> {
+  if (!apiKey.trim())
+    return { ok: false, mensaje: "No has pegado ninguna clave todavía." };
+  try {
+    const r = await fetch("/api/gemini", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        apiKey,
+        modelo,
+        prompt: 'Responde exactamente {"ok":true}',
+        schema: {
+          type: Type.OBJECT,
+          properties: { ok: { type: Type.BOOLEAN } },
+          required: ["ok"],
+        },
+      }),
+    });
+    const d = await r.json().catch(() => null);
+    if (r.ok && d?.texto)
+      return { ok: true, mensaje: `Responde correctamente con ${modelo}.` };
+    return { ok: false, mensaje: traducirError(new Error(d?.error ?? `HTTP ${r.status}`)).message };
+  } catch (e) {
+    return {
+      ok: false,
+      mensaje: e instanceof Error ? e.message : "No se pudo contactar con el servidor.",
+    };
+  }
 }

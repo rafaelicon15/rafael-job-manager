@@ -53,10 +53,13 @@ El sistema está diseñado para ser **persuasivo sin mentir**:
 Genera una gratis en [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
 y pégala en **Ajustes**. Se guarda solo en tu navegador.
 
-> **Aviso de seguridad.** Esta app llama a Gemini desde el navegador, así que la
-> clave es visible para quien abra la consola en tu equipo. Es aceptable para
-> uso personal, pero conviene ponerle un límite de cuota desde Google Cloud y
-> no compartir el enlace con tu sesión iniciada.
+> **Dónde vive la clave.** Se guarda en el `localStorage` de tu navegador, no en
+> el repositorio ni en variables de entorno. Las llamadas no van del navegador a
+> Google: pasan por `/api/gemini`, la ruta del propio proyecto, que las emite
+> desde el servidor (ver más abajo por qué). La clave viaja en el cuerpo de esa
+> petición, se usa para esa llamada y no se guarda ni se registra en el
+> servidor. Aun así, ponle un límite de cuota desde Google Cloud: sigue siendo
+> legible para quien abra la consola en tu equipo.
 
 ### 2. Fuentes de vacantes (opcional pero recomendable)
 

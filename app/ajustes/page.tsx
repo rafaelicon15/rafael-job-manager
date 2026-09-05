@@ -5,6 +5,7 @@ import { Download, Eye, EyeOff, ShieldAlert, Upload } from "lucide-react";
 import { useApp } from "@/lib/contexto";
 import { MODELOS } from "@/lib/gemini";
 import { Alerta } from "@/components/ui";
+import EstadoConfiguracion from "@/components/EstadoConfiguracion";
 
 export default function Ajustes() {
   const { estado, listo, guardarAjustes, exportar, importar, diasSinRespaldo } = useApp();
@@ -47,6 +48,8 @@ export default function Ajustes() {
 
       {mensaje && <Alerta tipo="ok">{mensaje}</Alerta>}
 
+      <EstadoConfiguracion />
+
       <section className="panel space-y-4 p-5">
         <h2 className="text-sm font-semibold">Motor de IA (Gemini)</h2>
 
@@ -88,13 +91,13 @@ export default function Ajustes() {
 
         <Alerta tipo="aviso">
           <span className="inline-flex items-center gap-1.5 font-semibold">
-            <ShieldAlert size={14} /> Esta clave se usa desde tu navegador.
+            <ShieldAlert size={14} /> Dónde vive esta clave.
           </span>{" "}
-          Es lo que elegiste y funciona bien para uso personal, pero significa que
-          queda visible para cualquiera que abra la consola en tu equipo. Dos
-          precauciones baratas: no compartas el enlace de la app con tu sesión
-          iniciada, y ponle un límite de cuota a la clave desde Google Cloud para que
-          un uso indebido no te salga caro.
+          Se guarda solo en este navegador. Las llamadas a Gemini no salen de aquí:
+          pasan por el servidor de la app, porque Google bloquea las peticiones que
+          salen de Venezuela. La clave viaja en esa petición, se usa y no se guarda
+          en el servidor. Aun así, ponle un límite de cuota desde Google Cloud: sigue
+          siendo legible para quien abra la consola en tu equipo.
         </Alerta>
 
         <div className="grid gap-3 sm:grid-cols-2">
