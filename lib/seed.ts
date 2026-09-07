@@ -640,8 +640,9 @@ export const PERFIL_INICIAL: PerfilMaestro = {
   preferencias: {
     modalidad: "100% remoto, cualquier país",
     disponibilidad: "Inmediata",
-    salarioMin: "",
-    salarioObjetivo: "",
+    // Declarado por él mismo en la entrevista con Grupo Index (7 sep 2026).
+    salarioMin: "600 USD/mes a media jornada",
+    salarioObjetivo: "1.200 - 1.500 USD/mes a jornada completa, según carga",
     rolesObjetivo: [
       "CRO Specialist",
       "Marketing Automation Specialist",
