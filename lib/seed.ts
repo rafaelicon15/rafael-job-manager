@@ -40,14 +40,14 @@ export const PERFIL_INICIAL: PerfilMaestro = {
       ubicacion: "Remoto",
       modalidad: "Remoto, jornada parcial",
       desde: "May 2026",
-      hasta: "Actualidad",
+      hasta: "Sep 2026",
       resumen:
-        "Gestión de paid media para captación y crecimiento. Rol de jornada parcial, en paralelo con Cohen & Aguirre Lobby Solutions.",
+        "Paid media, auditoría del ecosistema de captación y contenido, en paralelo con Cohen & Aguirre Lobby Solutions. Ciclo cerrado el 7 de septiembre de 2026.",
       logros: [
         {
           id: "l-latam-1",
           texto:
-            "Planifico, ejecuto y optimizo campañas digitales de paid media orientadas a los objetivos de captación y crecimiento de la escuela.",
+            "Planifiqué, ejecuté y optimicé campañas digitales de paid media orientadas a los objetivos de captación y crecimiento de la escuela.",
           angulos: ["ppc"],
           keywords: [
             "paid media",
@@ -57,19 +57,100 @@ export const PERFIL_INICIAL: PerfilMaestro = {
             "growth",
           ],
           evidencia: [
-            { tipo: "referencia", descripcion: "Puesto actual, verificable en LinkedIn" },
+            { tipo: "referencia", descripcion: "Verificable en LinkedIn y con Latam Business School" },
           ],
         },
         {
           id: "l-latam-2",
           texto:
-            "Analizo el rendimiento de las campañas y me coordino con el equipo de Marketing para fortalecer la generación de leads.",
+            "Analicé el rendimiento de las campañas y me coordiné con el equipo de Marketing para fortalecer la generación de leads.",
           angulos: ["ppc", "cro"],
           keywords: [
             "análisis de rendimiento",
             "generación de leads",
             "reporting",
-            "trabajo con equipo de marketing",
+          ],
+        },
+        {
+          id: "l-latam-3",
+          texto:
+            "Audité el flujo completo del CRM e identifiqué los puntos de fricción del recorrido del lead, entregando los hallazgos documentados al equipo.",
+          angulos: ["cro", "ppc"],
+          keywords: [
+            "auditoría de CRM",
+            "flujo de leads",
+            "puntos de fricción",
+            "recorrido del lead",
+          ],
+        },
+        {
+          id: "l-latam-4",
+          texto:
+            "Audité la integración de herramientas de Inteligencia Artificial en la atención de nuevos leads, evaluando su efecto sobre la captación.",
+          angulos: ["ia", "cro"],
+          keywords: [
+            "integración de IA",
+            "atención de leads",
+            "automatización",
+            "auditoría",
+          ],
+        },
+        {
+          id: "l-latam-5",
+          texto:
+            "Creé y estandaricé las plantillas de WhatsApp del equipo comercial para acelerar el primer contacto y el seguimiento de leads.",
+          angulos: ["cro", "ppc"],
+          keywords: [
+            "WhatsApp",
+            "plantillas",
+            "speed to lead",
+            "seguimiento comercial",
+          ],
+        },
+        {
+          id: "l-latam-6",
+          texto:
+            "Ejecuté auditorías del contenido orgánico y de la competencia para detectar brechas de posicionamiento y oportunidades de mercado.",
+          angulos: ["seo", "cro"],
+          keywords: [
+            "auditoría SEO",
+            "contenido orgánico",
+            "análisis de competencia",
+            "brechas de posicionamiento",
+          ],
+        },
+        {
+          id: "l-latam-7",
+          texto:
+            "Corregí contenido e imágenes del sitio web y desarrollé piezas publicitarias y material de apoyo en coordinación directa con el equipo de diseño.",
+          angulos: ["web", "ppc"],
+          keywords: [
+            "corrección de contenido",
+            "optimización de imágenes",
+            "piezas publicitarias",
+            "trabajo con equipo de diseño",
+          ],
+        },
+        {
+          id: "l-latam-8",
+          texto:
+            "Elaboré y entregué al equipo de diseño la guía de contenido de prueba de agosto, definiendo la línea editorial del canal.",
+          angulos: ["seo", "web"],
+          keywords: [
+            "guía de contenido",
+            "calendario editorial",
+            "planificación de contenidos",
+          ],
+        },
+        {
+          id: "l-latam-9",
+          texto:
+            "Documenté y reporté los fallos técnicos y operativos detectados en el ecosistema digital para su resolución por el equipo correspondiente.",
+          angulos: ["ti", "cro"],
+          keywords: [
+            "reportes de fallo",
+            "troubleshooting",
+            "documentación técnica",
           ],
         },
       ],
