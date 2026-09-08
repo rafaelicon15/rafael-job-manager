@@ -317,7 +317,7 @@ export const PERFIL_INICIAL: PerfilMaestro = {
       empresa: "The WebSell",
       ubicacion: "Remoto",
       modalidad: "Remoto, consultoría por proyectos",
-      desde: "Jul 2026",
+      desde: "Jun 2026",
       hasta: "Actualidad",
       resumen:
         "Consultoría a la agencia desde que cerró la etapa presencial.",
