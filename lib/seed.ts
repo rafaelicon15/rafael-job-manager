@@ -532,6 +532,19 @@ export const PERFIL_INICIAL: PerfilMaestro = {
   ],
   certificaciones: [
     {
+      id: "c25",
+      nombre: "AI Unlocked: Agents and Skills",
+      emisor: "Binance Academy",
+      url: "https://drive.google.com/file/d/1dxEYlpRInDlhC8jzv-JVaV7rSDsY-nMm/view?usp=sharing",
+    },
+    {
+      id: "c26",
+      nombre: "Networking Basics",
+      emisor: "Cisco Networking Academy",
+      anio: "2025",
+      url: "https://drive.google.com/file/d/1XGNGRiQeR4x7uyX8db0i8i8W2y-R9Vd0/view?usp=sharing",
+    },
+    {
       id: "c21",
       nombre: "Conversion Optimization Certification",
       emisor: "Google",
