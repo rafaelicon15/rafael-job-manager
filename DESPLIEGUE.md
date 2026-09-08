@@ -191,17 +191,15 @@ Ya están cargadas y verificadas contra tu LinkedIn y tu portafolio las siete
 experiencias con sus fechas y cargos, los 20 logros reutilizables, las
 habilidades por nivel y las fechas de estudios.
 
-Quedan **dos cosas** que solo puedes poner tú, porque el motor tiene
-**prohibido inventarlas**:
+El perfil está **completo**: siete experiencias con fechas y cargos verificados
+contra LinkedIn y el portafolio, 27 logros reutilizables, habilidades por nivel,
+expectativa salarial (1.200-1.500 USD a jornada completa) y nivel de inglés
+(básico).
 
-1. **Tu nivel real de inglés.** Ahora dice "Pendiente de definir". Como buscas
-   remoto worldwide, esto sale en casi todas las entrevistas. Pon lo que puedas
-   sostener en una llamada: `B1 conversacional`, `B2 profesional`, etc.
-2. **Tu expectativa salarial** (mínimo y objetivo). Sin esto, cada vez que un
-   formulario te pregunte por el sueldo el motor te dejará un
-   `[COMPLETAR: expectativa salarial]` en lugar de responder.
-
-Cuando los tengas, el aviso amarillo desaparece.
+Ese último dato acota el mercado y el motor ya lo tiene en cuenta al puntuar:
+con inglés básico, las vacantes en inglés se penalizan y el foco real es
+**España y LatAm**. Si algún día subes de nivel, cámbialo en Perfil maestro y
+el triaje se reajusta solo.
 
 ---
 

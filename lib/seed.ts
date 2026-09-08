@@ -315,7 +315,7 @@ export const PERFIL_INICIAL: PerfilMaestro = {
       id: "exp-websell",
       puesto: "Performance Marketing Manager | Paid Media Specialist (Meta & Google Ads)",
       empresa: "The WebSell",
-      ubicacion: "Maracay, Estado Aragua, Venezuela",
+      ubicacion: "Maracay, Venezuela (sede central en Miami, EE. UU.)",
       modalidad: "Presencial, jornada completa",
       desde: "Abr 2025",
       hasta: "Jun 2026",
@@ -678,7 +678,7 @@ export const PERFIL_INICIAL: PerfilMaestro = {
   ],
   idiomas: [
     { idioma: "Español", nivel: "Nativo" },
-    { idioma: "Inglés", nivel: "Pendiente de definir" },
+    { idioma: "Inglés", nivel: "Básico" },
   ],
   psicometria: [
     {
@@ -719,7 +719,8 @@ export const PERFIL_INICIAL: PerfilMaestro = {
     "Si falta un requisito, decirlo y proponer cómo compensarlo, no maquillarlo.",
   ],
   preferencias: {
-    modalidad: "100% remoto, cualquier país",
+    modalidad:
+      "100% remoto. Por nivel de inglés básico, el mercado realista es de habla hispana: España y LatAm.",
     disponibilidad: "Inmediata",
     // Declarado por él mismo en la entrevista con Grupo Index (7 sep 2026).
     salarioMin: "600 USD/mes a media jornada",
