@@ -315,12 +315,12 @@ export const PERFIL_INICIAL: PerfilMaestro = {
       id: "exp-websell-consultor",
       puesto: "Consultor externo de Performance Marketing",
       empresa: "The WebSell",
-      ubicacion: "Remoto (agencia con sede central en Miami, EE. UU.)",
+      ubicacion: "Remoto",
       modalidad: "Remoto, consultoría por proyectos",
       desde: "Jul 2026",
       hasta: "Actualidad",
       resumen:
-        "Continuidad de la relación con la agencia tras el cierre de la etapa presencial, ahora como consultor externo.",
+        "Consultoría a la agencia desde que cerró la etapa presencial.",
       logros: [
         {
           id: "l-wsc-1",
@@ -346,7 +346,7 @@ export const PERFIL_INICIAL: PerfilMaestro = {
       id: "exp-websell",
       puesto: "Performance Marketing Manager | Paid Media Specialist (Meta & Google Ads)",
       empresa: "The WebSell",
-      ubicacion: "Maracay, Venezuela (sede central en Miami, EE. UU.)",
+      ubicacion: "Maracay, Estado Aragua, Venezuela",
       modalidad: "Presencial, jornada completa",
       desde: "Abr 2025",
       hasta: "Jun 2026",
@@ -663,6 +663,8 @@ export const PERFIL_INICIAL: PerfilMaestro = {
         { nombre: "Shopify", nivel: 4, anios: 2 },
         { nombre: "WordPress (Elementor)", nivel: 4 },
         { nombre: "Google Apps Script", nivel: 3 },
+        { nombre: "Webflow", nivel: 1 },
+        { nombre: "Stripe", nivel: 1 },
         { nombre: "Astro", nivel: 2 },
         { nombre: "Next.js", nivel: 2 },
         { nombre: "React", nivel: 2 },
