@@ -532,6 +532,34 @@ export const PERFIL_INICIAL: PerfilMaestro = {
   ],
   certificaciones: [
     {
+      id: "c21",
+      nombre: "Conversion Optimization Certification",
+      emisor: "Google",
+      anio: "2026",
+      url: "https://drive.google.com/file/d/1EOsp8gfulcnIQC6qRqvyoePgi-y61Fgn/view?usp=sharing",
+    },
+    {
+      id: "c22",
+      nombre: "SEO Internacional",
+      emisor: "Semrush Academy",
+      anio: "2026",
+      url: "https://drive.google.com/file/d/1xUxgrqQKUaFAJqNdndOiUIFdA1lg7bwh/view?usp=sharing",
+    },
+    {
+      id: "c23",
+      nombre: "Fundamentos de Marketing de Contenidos",
+      emisor: "Semrush Academy",
+      anio: "2026",
+      url: "https://drive.google.com/file/d/1tBFj10eCy0AOy7yhk_lQBe_IFghwGSP-/view?usp=sharing",
+    },
+    {
+      id: "c24",
+      nombre: "Cómo crear una web para pequeñas empresas",
+      emisor: "Semrush Academy",
+      anio: "2026",
+      url: "https://drive.google.com/file/d/1DMMK1MApogGFBxTFYTZdhNlhQfuM0fVC/view?usp=sharing",
+    },
+    {
       id: "c1",
       nombre: "Impulsa tu marketing con el píxel de Facebook",
       emisor: "Facebook Blueprint",
