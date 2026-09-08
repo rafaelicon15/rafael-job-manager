@@ -22,6 +22,7 @@ const FUENTES = [
   { id: "wwr", label: "WeWorkRemotely", requiereClave: false },
   { id: "adzuna", label: "Adzuna", requiereClave: true },
   { id: "jooble", label: "Jooble", requiereClave: true },
+  { id: "careerjet", label: "Careerjet", requiereClave: true },
 ];
 
 export default function Buscar() {
@@ -68,6 +69,7 @@ export default function Buscar() {
           adzunaAppKey: ajustes.adzunaAppKey,
           joobleKey: ajustes.joobleKey,
           joobleUbicacion: "remoto",
+          careerjetKey: ajustes.careerjetKey,
         }),
       });
       const d = await r.json();
@@ -192,7 +194,8 @@ export default function Buscar() {
               const activa = fuentes.includes(f.id);
               const bloqueada =
                 (f.id === "adzuna" && sinClavesAdzuna) ||
-                (f.id === "jooble" && !ajustes.joobleKey);
+                (f.id === "jooble" && !ajustes.joobleKey) ||
+                (f.id === "careerjet" && !ajustes.careerjetKey);
               return (
                 <button
                   key={f.id}
@@ -216,9 +219,10 @@ export default function Buscar() {
               );
             })}
           </div>
-          {(sinClavesAdzuna || !ajustes.joobleKey) && (
+          {(sinClavesAdzuna || !ajustes.joobleKey || !ajustes.careerjetKey) && (
             <p className="mt-2 text-xs text-[var(--color-suave)]">
-              Adzuna y Jooble son las que traen vacantes en español y no remotas.{" "}
+              Adzuna, Jooble y Careerjet son las que traen vacantes en español y no
+              remotas: cubren España, Venezuela y LatAm.{" "}
               <Link href="/ajustes" className="text-[var(--color-acento)] underline">
                 Configura sus claves gratis
               </Link>

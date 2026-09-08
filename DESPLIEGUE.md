@@ -173,8 +173,21 @@ Jobicy, WeWorkRemotely), pero son casi todo remoto global en inglés.
 2. Solicita la API key con `rafaelicon15@gmail.com` (te llega por correo).
 3. Pégala en **Ajustes** → *Jooble API key*.
 
-Cuando estén puestas, en **Buscar vacantes** verás que los botones "Adzuna" y
-"Jooble" dejan de tener la llave 🔑 y pasan a azul.
+### Careerjet — Venezuela, España y LatAm
+
+1. Entra en <https://www.careerjet.com/partners/api> y crea una cuenta de
+   Publisher con `rafaelicon15@gmail.com`.
+2. Copia la API key.
+3. Pégala en **Ajustes** → *Careerjet API key*.
+
+Gratuita, 1.000 peticiones por hora. Consulta tres mercados a la vez
+(`es_VE`, `es_ES`, `es_MX`) y junta los resultados.
+
+Cuando estén puestas, en **Buscar vacantes** verás que los botones "Adzuna",
+"Jooble" y "Careerjet" dejan de tener la llave 🔑 y pasan a azul. En
+**Ajustes → Estado de la configuración** tienes un botón *Probar* para cada
+una que hace una búsqueda real y te dice cuántas vacantes devolvió, o el
+error exacto si la clave está mal.
 
 ---
 

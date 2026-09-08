@@ -229,6 +229,7 @@ export interface Ajustes {
   adzunaAppId: string;
   adzunaAppKey: string;
   joobleKey: string;
+  careerjetKey: string;
   idiomaPorDefecto: Idioma;
   ultimoRespaldo?: string;
 }

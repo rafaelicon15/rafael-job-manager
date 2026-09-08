@@ -834,6 +834,7 @@ export const AJUSTES_INICIALES: Ajustes = {
   adzunaAppId: "",
   adzunaAppKey: "",
   joobleKey: "",
+  careerjetKey: "",
   idiomaPorDefecto: "es",
 };
 

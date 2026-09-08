@@ -236,6 +236,32 @@ export default function Ajustes() {
             . Cubre Venezuela y LatAm, que es donde las otras fuentes flojean.
           </p>
         </div>
+
+        <div>
+          <label className="etiqueta" htmlFor="careerjet">
+            Careerjet API key
+          </label>
+          <input
+            id="careerjet"
+            type="password"
+            className="campo font-mono"
+            autoComplete="off"
+            value={ajustes.careerjetKey}
+            onChange={(e) => guardarAjustes({ careerjetKey: e.target.value.trim() })}
+          />
+          <p className="mt-1.5 text-xs leading-relaxed text-[var(--color-suave)]">
+            Gratuita, 1.000 peticiones por hora. Pídela en{" "}
+            <a
+              href="https://www.careerjet.com/partners/api"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[var(--color-acento)] underline"
+            >
+              careerjet.com/partners/api
+            </a>
+            . Cubre Venezuela, España y LatAm, que es tu mercado real.
+          </p>
+        </div>
       </section>
 
       <section className="panel space-y-4 p-5">

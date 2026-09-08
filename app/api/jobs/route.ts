@@ -199,6 +199,26 @@ async function weworkremotely(q: string): Promise<VacanteCruda[]> {
     .slice(0, 40);
 }
 
+/**
+ * Junta los resultados de varias consultas por país o mercado. Si TODAS fallan,
+ * propaga el error en lugar de devolver una lista vacía: una clave inválida
+ * tiene que verse como "tu clave está mal", no como "no hay vacantes". Si solo
+ * fallan algunas, se devuelve lo que sí llegó.
+ */
+function juntarMercados(
+  resultados: PromiseSettledResult<VacanteCruda[]>[],
+  fuente: string
+): VacanteCruda[] {
+  const buenos = resultados.filter((r) => r.status === "fulfilled");
+  if (!buenos.length && resultados.length) {
+    const primero = resultados[0] as PromiseRejectedResult;
+    const motivo =
+      primero.reason instanceof Error ? primero.reason.message : String(primero.reason);
+    throw new Error(`${fuente}: ${motivo}`);
+  }
+  return buenos.flatMap((r) => (r as PromiseFulfilledResult<VacanteCruda[]>).value);
+}
+
 async function adzuna(
   q: string,
   appId: string,
@@ -235,7 +255,7 @@ async function adzuna(
       });
     })
   );
-  return porPais.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
+  return juntarMercados(porPais, "Adzuna");
 }
 
 async function jooble(
@@ -264,6 +284,71 @@ async function jooble(
   }));
 }
 
+
+/**
+ * Careerjet: agregador con buena cobertura de Venezuela, España y LatAm, que
+ * es el mercado real de Rafael. Dos detalles de su API que hay que respetar:
+ *  - `user_ip` y `user_agent` son OBLIGATORIOS. Sin ellos devuelve 403. Se
+ *    reenvían los del usuario que originó la búsqueda, que es lo que pide su
+ *    documentación, no los del servidor.
+ *  - Solo acepta un `locale_code` por petición, así que se consulta cada
+ *    mercado por separado y se juntan los resultados.
+ */
+async function careerjet(
+  q: string,
+  apiKey: string,
+  locales: string[],
+  ubicacion: string,
+  ip: string,
+  ua: string
+): Promise<VacanteCruda[]> {
+  if (!apiKey) return [];
+  const auth = "Basic " + Buffer.from(apiKey + ":").toString("base64");
+
+  const porMercado = await Promise.allSettled(
+    locales.map(async (locale) => {
+      const url = new URL("https://search.api.careerjet.net/v4/query");
+      url.searchParams.set("locale_code", locale);
+      if (q) url.searchParams.set("keywords", q);
+      if (ubicacion) url.searchParams.set("location", ubicacion);
+      url.searchParams.set("page_size", "50");
+      url.searchParams.set("sort", "date");
+      url.searchParams.set("user_ip", ip);
+      url.searchParams.set("user_agent", ua);
+
+      const r = await traer(url.toString(), { headers: { Authorization: auth } });
+      const d = await r.json();
+
+      // La API responde con type LOCATIONS cuando la ubicación es ambigua o no
+      // existe, y con ERROR si algo falta. En ninguno de los dos casos hay
+      // vacantes, y no es un fallo que deba tumbar el resto de la búsqueda.
+      if (d?.type !== "JOBS") return [];
+
+      const pais = locale.split("_")[1] ?? "";
+      return (d.jobs ?? []).map((j: Record<string, unknown>, i: number) => {
+        const min = j.salary_min as number | undefined;
+        const max = j.salary_max as number | undefined;
+        const moneda = String(j.salary_currency_code ?? "");
+        return {
+          id: `careerjet-${locale}-${i}-${String(j.url ?? "").slice(-14)}`,
+          titulo: String(j.title ?? ""),
+          empresa: String(j.company ?? ""),
+          ubicacion: `${String(j.locations ?? "")}${pais ? ` (${pais})` : ""}`,
+          modalidad: "",
+          salario:
+            String(j.salary ?? "") ||
+            (min && max ? `${min} - ${max} ${moneda}`.trim() : ""),
+          url: String(j.url ?? ""),
+          fuente: `Careerjet ${pais}`,
+          publicada: String(j.date ?? ""),
+          descripcion: limpiarHTML(String(j.description ?? "")),
+        };
+      });
+    })
+  );
+  return juntarMercados(porMercado, "Careerjet");
+}
+
 // -------------------------------------------------------------------- ruta
 
 interface Cuerpo {
@@ -274,6 +359,9 @@ interface Cuerpo {
   adzunaPaises?: string[];
   joobleKey?: string;
   joobleUbicacion?: string;
+  careerjetKey?: string;
+  careerjetLocales?: string[];
+  careerjetUbicacion?: string;
 }
 
 export async function POST(req: Request) {
@@ -288,7 +376,16 @@ export async function POST(req: Request) {
   const activas = new Set(
     cuerpo.fuentes?.length
       ? cuerpo.fuentes
-      : ["remotive", "remoteok", "arbeitnow", "jobicy", "wwr", "adzuna", "jooble"]
+      : [
+          "remotive",
+          "remoteok",
+          "arbeitnow",
+          "jobicy",
+          "wwr",
+          "adzuna",
+          "jooble",
+          "careerjet",
+        ]
   );
 
   const tareas: { nombre: string; p: Promise<VacanteCruda[]> }[] = [];
@@ -311,6 +408,22 @@ export async function POST(req: Request) {
     tareas.push({
       nombre: "Jooble",
       p: jooble(q, cuerpo.joobleKey ?? "", cuerpo.joobleUbicacion ?? "remoto"),
+    });
+  if (activas.has("careerjet"))
+    tareas.push({
+      nombre: "Careerjet",
+      p: careerjet(
+        q,
+        cuerpo.careerjetKey ?? "",
+        cuerpo.careerjetLocales?.length
+          ? cuerpo.careerjetLocales
+          : ["es_VE", "es_ES", "es_MX"],
+        cuerpo.careerjetUbicacion ?? "",
+        // Careerjet exige la IP y el navegador de quien origina la búsqueda.
+        (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() ||
+          "127.0.0.1",
+        req.headers.get("user-agent") ?? UA
+      ),
     });
 
   const acabadas = await Promise.allSettled(tareas.map((t) => t.p));

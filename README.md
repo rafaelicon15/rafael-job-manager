@@ -17,7 +17,7 @@ en ningún servidor.
 | Módulo | Para qué sirve |
 |---|---|
 | **Panel** | Embudo de postulaciones, tasa de respuesta y seguimientos vencidos. |
-| **Buscar vacantes** | Consulta 7 agregadores en paralelo y puntúa el encaje de cada oferta con IA antes de que pierdas tiempo leyendo. |
+| **Buscar vacantes** | Consulta 8 agregadores en paralelo y puntúa el encaje de cada oferta con IA antes de que pierdas tiempo leyendo. |
 | **Ficha de vacante** | Análisis de encaje requisito por requisito, brechas con mitigación, keywords ATS, banderas rojas de la oferta y preguntas para el reclutador. |
 | **CV a medida** | Reescribe y reordena tus logros reales para esa oferta y exporta un PDF ATS-friendly en español o inglés. |
 | **Carta y mensaje** | Carta de presentación, línea de asunto y mensaje corto de LinkedIn para el reclutador, atando cada requisito a un hecho verificable. |
@@ -72,6 +72,8 @@ Para vacantes en español y ofertas no remotas, añade en **Ajustes**:
   Gratis, sin tarjeta. Cubre España, EE. UU., Reino Unido, México y más.
 - **Jooble** — [jooble.org/api/about](https://jooble.org/api/about).
   Cubre Venezuela y LatAm.
+- **Careerjet** — [careerjet.com/partners/api](https://www.careerjet.com/partners/api).
+  Gratuita, 1.000 peticiones/hora. Venezuela, España y LatAm.
 
 ### 3. Extensión de Chrome
 
@@ -117,7 +119,7 @@ app/
   perfil/               Editor del perfil maestro
   ajustes/              Claves, modelo, respaldos
   capture/              Recibe las ofertas de la extensión
-  api/jobs/             Proxy servidor -> 7 agregadores (evita CORS)
+  api/jobs/             Proxy servidor -> 8 agregadores (evita CORS)
   api/extraer/          Descarga una URL de oferta y la pasa a texto plano
   api/gemini/           Proxy a Gemini: evita la restricción geográfica
 lib/

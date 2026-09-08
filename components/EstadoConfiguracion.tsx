@@ -26,9 +26,10 @@ export default function EstadoConfiguracion() {
   const [gemini, setGemini] = useState<Resultado>(null);
   const [adzuna, setAdzuna] = useState<Resultado>(null);
   const [jooble, setJooble] = useState<Resultado>(null);
+  const [careerjet, setCareerjet] = useState<Resultado>(null);
 
   async function probarFuente(
-    fuente: "adzuna" | "jooble",
+    fuente: "adzuna" | "jooble" | "careerjet",
     set: (r: Resultado) => void
   ) {
     set("probando");
@@ -43,6 +44,7 @@ export default function EstadoConfiguracion() {
           adzunaAppKey: ajustes.adzunaAppKey,
           joobleKey: ajustes.joobleKey,
           joobleUbicacion: "remoto",
+          careerjetKey: ajustes.careerjetKey,
         }),
       });
       const d = await r.json();
@@ -126,6 +128,24 @@ export default function EstadoConfiguracion() {
           className="btn py-1.5 text-xs"
           disabled={jooble === "probando" || !ajustes.joobleKey}
           onClick={() => probarFuente("jooble", setJooble)}
+        >
+          Probar
+        </button>
+      ),
+    },
+    {
+      clave: "careerjet",
+      titulo: "Careerjet (Venezuela, España y LatAm)",
+      detalle: ajustes.careerjetKey
+        ? "Clave guardada"
+        : "Opcional. Gratuita, 1.000 peticiones/hora, y cubre tu mercado real.",
+      estado: ajustes.careerjetKey ? "ok" : "opcional",
+      resultado: careerjet,
+      accion: (
+        <button
+          className="btn py-1.5 text-xs"
+          disabled={careerjet === "probando" || !ajustes.careerjetKey}
+          onClick={() => probarFuente("careerjet", setCareerjet)}
         >
           Probar
         </button>
