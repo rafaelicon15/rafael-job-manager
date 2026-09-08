@@ -312,6 +312,37 @@ export const PERFIL_INICIAL: PerfilMaestro = {
       ],
     },
     {
+      id: "exp-websell-consultor",
+      puesto: "Consultor externo de Performance Marketing",
+      empresa: "The WebSell",
+      ubicacion: "Remoto (agencia con sede central en Miami, EE. UU.)",
+      modalidad: "Remoto, consultoría por proyectos",
+      desde: "Jul 2026",
+      hasta: "Actualidad",
+      resumen:
+        "Continuidad de la relación con la agencia tras el cierre de la etapa presencial, ahora como consultor externo.",
+      logros: [
+        {
+          id: "l-wsc-1",
+          texto:
+            "Asesoro a la agencia y a sus cuentas en estrategia de paid media y analítica de rendimiento, manteniendo la relación tras cerrar la etapa presencial.",
+          angulos: ["ppc", "cro"],
+          keywords: [
+            "consultoría",
+            "paid media",
+            "estrategia de campañas",
+            "analítica de rendimiento",
+          ],
+          evidencia: [
+            {
+              tipo: "referencia",
+              descripcion: "Relación vigente con The WebSell, contrastable con la agencia",
+            },
+          ],
+        },
+      ],
+    },
+    {
       id: "exp-websell",
       puesto: "Performance Marketing Manager | Paid Media Specialist (Meta & Google Ads)",
       empresa: "The WebSell",
