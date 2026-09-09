@@ -177,11 +177,22 @@ Jobicy, WeWorkRemotely), pero son casi todo remoto global en inglés.
 
 1. Entra en <https://www.careerjet.com/partners/api> y crea una cuenta de
    Publisher con `rafaelicon15@gmail.com`.
-2. Copia la API key.
+2. Registra el sitio `rafael-job-manager.vercel.app` y entra en su enlace
+   **Access API**. La clave está ahí dentro; lo que aparece en la lista de
+   sitios no es la clave. Cada sitio registrado tiene la suya.
 3. Pégala en **Ajustes** → *Careerjet API key*.
 
-Gratuita, 1.000 peticiones por hora. Consulta tres mercados a la vez
-(`es_VE`, `es_ES`, `es_MX`) y junta los resultados.
+Gratuita. Consulta tres mercados a la vez (`es_VE`, `es_ES`, `es_MX`) y junta
+los resultados. **Es la única fuente con clave que trae vacantes de Venezuela**:
+Jooble devuelve 0 allí.
+
+> Detalle técnico, por si algún día falla. Careerjet tiene dos APIs. La moderna
+> (v4, HTTPS) autoriza por lista blanca de IPs y devuelve
+> `Unauthorized access from IP ...` desde Vercel, que sale por IPs dinámicas.
+> La app usa la clásica (`public.api.careerjet.net`), que autoriza por la
+> cabecera `Referer` del sitio registrado y acepta la misma clave como `affid`.
+> Esa API solo escucha en HTTP: su HTTPS no llega a conectar. La llamada sale
+> del servidor y solo lleva la búsqueda y el `affid`, ningún dato personal.
 
 Cuando estén puestas, en **Buscar vacantes** verás que los botones "Adzuna",
 "Jooble" y "Careerjet" dejan de tener la llave 🔑 y pasan a azul. En
