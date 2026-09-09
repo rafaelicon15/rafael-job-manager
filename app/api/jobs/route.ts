@@ -55,7 +55,19 @@ async function traer(url: string, init?: RequestInit) {
       headers: { "User-Agent": UA, Accept: "application/json", ...(init?.headers ?? {}) },
       cache: "no-store",
     });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    if (!r.ok) {
+      // El cuerpo es donde estas APIs explican QUE esta mal. Careerjet, por
+      // ejemplo, distingue "no mandaste clave" de "la clave no vale"; tirarlo
+      // deja al usuario con un "HTTP 401" que no le dice nada.
+      const cuerpo = await r.text().catch(() => "");
+      let motivo = "";
+      try {
+        motivo = String(JSON.parse(cuerpo)?.error ?? "");
+      } catch {
+        motivo = cuerpo.trim().slice(0, 160);
+      }
+      throw new Error(`HTTP ${r.status}${motivo ? ` — ${motivo}` : ""}`);
+    }
     return r;
   } finally {
     clearTimeout(t);
@@ -258,32 +270,51 @@ async function adzuna(
   return juntarMercados(porPais, "Adzuna");
 }
 
+/**
+ * Jooble. Dos cosas medidas contra la API real con la clave de Rafael:
+ *  - La clave esta atada al indice global de jooble.org. Los subdominios por
+ *    pais (es./ve./mx.jooble.org) la rechazan con 403: cada pais emite la suya.
+ *  - Sobre ese indice, `location` solo devuelve algo util con nombres de pais
+ *    en ingles, y solo de algunos: "Spain" y "Mexico" dan resultados reales,
+ *    mientras Venezuela, Colombia, Argentina y Chile devuelven 0. Peor aun,
+ *    las ciudades enganchan homonimos de EE.UU.: "Madrid" devuelve vacantes
+ *    de Nuevo Mexico y "Peru" de Massachusetts.
+ * Por eso se consultan los mercados que si funcionan mas la busqueda sin
+ * ubicacion, que es la que trae el grueso de lo remoto, y se juntan.
+ */
 async function jooble(
   q: string,
   key: string,
-  ubicacion: string
+  ubicaciones: string[]
 ): Promise<VacanteCruda[]> {
   if (!key) return [];
-  const r = await traer(`https://jooble.org/api/${encodeURIComponent(key)}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ keywords: q || "marketing digital", location: ubicacion }),
-  });
-  const d = await r.json();
-  return (d.jobs ?? []).slice(0, 30).map((j: Record<string, unknown>, i: number) => ({
-    id: `jooble-${i}-${String(j.id ?? "")}`,
-    titulo: String(j.title ?? ""),
-    empresa: String(j.company ?? ""),
-    ubicacion: String(j.location ?? ""),
-    modalidad: "",
-    salario: String(j.salary ?? ""),
-    url: String(j.link ?? ""),
-    fuente: "Jooble",
-    publicada: String(j.updated ?? ""),
-    descripcion: limpiarHTML(String(j.snippet ?? "")),
-  }));
+  const porMercado = await Promise.allSettled(
+    ubicaciones.map(async (ubicacion) => {
+      const r = await traer(`https://jooble.org/api/${encodeURIComponent(key)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          keywords: q || "marketing digital",
+          location: ubicacion,
+        }),
+      });
+      const d = await r.json();
+      return (d.jobs ?? []).slice(0, 30).map((j: Record<string, unknown>, i: number) => ({
+        id: `jooble-${ubicacion || "global"}-${i}-${String(j.id ?? "")}`,
+        titulo: String(j.title ?? ""),
+        empresa: String(j.company ?? ""),
+        ubicacion: String(j.location ?? ""),
+        modalidad: "",
+        salario: String(j.salary ?? ""),
+        url: String(j.link ?? ""),
+        fuente: "Jooble",
+        publicada: String(j.updated ?? ""),
+        descripcion: limpiarHTML(String(j.snippet ?? "")),
+      }));
+    })
+  );
+  return juntarMercados(porMercado, "Jooble");
 }
-
 
 /**
  * Careerjet: agregador con buena cobertura de Venezuela, España y LatAm, que
@@ -358,7 +389,7 @@ interface Cuerpo {
   adzunaAppKey?: string;
   adzunaPaises?: string[];
   joobleKey?: string;
-  joobleUbicacion?: string;
+  joobleUbicaciones?: string[];
   careerjetKey?: string;
   careerjetLocales?: string[];
   careerjetUbicacion?: string;
@@ -407,7 +438,13 @@ export async function POST(req: Request) {
   if (activas.has("jooble"))
     tareas.push({
       nombre: "Jooble",
-      p: jooble(q, cuerpo.joobleKey ?? "", cuerpo.joobleUbicacion ?? "remoto"),
+      p: jooble(
+        q,
+        cuerpo.joobleKey ?? "",
+        cuerpo.joobleUbicaciones?.length
+          ? cuerpo.joobleUbicaciones
+          : ["", "Spain", "Mexico"]
+      ),
     });
   if (activas.has("careerjet"))
     tareas.push({

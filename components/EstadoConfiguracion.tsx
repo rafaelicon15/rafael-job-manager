@@ -43,7 +43,6 @@ export default function EstadoConfiguracion() {
           adzunaAppId: ajustes.adzunaAppId,
           adzunaAppKey: ajustes.adzunaAppKey,
           joobleKey: ajustes.joobleKey,
-          joobleUbicacion: "remoto",
           careerjetKey: ajustes.careerjetKey,
         }),
       });
@@ -54,7 +53,8 @@ export default function EstadoConfiguracion() {
       else if (!d.total)
         set({
           ok: false,
-          mensaje: "Respondió sin error pero no devolvió ninguna vacante. Revisa las claves.",
+          mensaje:
+            "La clave funciona (la API respondió sin error), pero esta búsqueda no devolvió vacantes.",
         });
       else set({ ok: true, mensaje: `Devolvió ${d.total} vacantes.` });
     } catch (e) {
@@ -138,7 +138,7 @@ export default function EstadoConfiguracion() {
       titulo: "Careerjet (Venezuela, España y LatAm)",
       detalle: ajustes.careerjetKey
         ? "Clave guardada"
-        : "Opcional. Gratuita, 1.000 peticiones/hora, y cubre tu mercado real.",
+        : "Opcional. Gratuita. La clave está en careerjet.com/partners, dentro de «Access API» de tu sitio; no es el ID de afiliado.",
       estado: ajustes.careerjetKey ? "ok" : "opcional",
       resultado: careerjet,
       accion: (

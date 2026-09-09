@@ -68,7 +68,6 @@ export default function Buscar() {
           adzunaAppId: ajustes.adzunaAppId,
           adzunaAppKey: ajustes.adzunaAppKey,
           joobleKey: ajustes.joobleKey,
-          joobleUbicacion: "remoto",
           careerjetKey: ajustes.careerjetKey,
         }),
       });
