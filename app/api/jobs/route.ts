@@ -9,6 +9,8 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Ocho fuentes en paralelo, y Careerjet sola puede tardar ~8 s por mercado.
+export const maxDuration = 60;
 
 export interface VacanteCruda {
   id: string;
@@ -45,9 +47,9 @@ function limpiarHTML(html: string): string {
     .trim();
 }
 
-async function traer(url: string, init?: RequestInit) {
+async function traer(url: string, init?: RequestInit, msTiempoLimite = 12000) {
   const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 12000);
+  const t = setTimeout(() => ctrl.abort(), msTiempoLimite);
   try {
     const r = await fetch(url, {
       ...init,
@@ -347,7 +349,13 @@ async function careerjet(
       url.searchParams.set("user_ip", ip);
       url.searchParams.set("user_agent", ua);
 
-      const r = await traer(url.toString(), { headers: { Authorization: auth } });
+      // Medido desde Vercel: Careerjet tarda 6-8 s por locale, con picos que
+      // superaban el limite por defecto de 12 s y abortaban la fuente entera.
+      const r = await traer(
+        url.toString(),
+        { headers: { Authorization: auth } },
+        30000
+      );
       const d = await r.json();
 
       // La API responde con type LOCATIONS cuando la ubicación es ambigua o no
