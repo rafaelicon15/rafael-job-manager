@@ -460,7 +460,11 @@ export async function POST(req: Request) {
         q,
         cuerpo.adzunaAppId ?? "",
         cuerpo.adzunaAppKey ?? "",
-        cuerpo.adzunaPaises?.length ? cuerpo.adzunaPaises : ["es", "us", "gb", "mx"]
+        // Adzuna no cubre Venezuela, Colombia, Argentina, Chile ni Peru: de
+        // LatAm solo tiene Mexico y Brasil. Se piden los dos mercados
+        // hispanos que si cubre. "us" y "gb" sumaban 425.000 vacantes en
+        // ingles, un mercado que con ingles basico no es realista.
+        cuerpo.adzunaPaises?.length ? cuerpo.adzunaPaises : ["es", "mx"]
       ),
     });
   if (activas.has("jooble"))
@@ -523,13 +527,36 @@ export async function POST(req: Request) {
     return true;
   });
 
-  unicas.sort(
-    (a, b) => new Date(b.publicada || 0).getTime() - new Date(a.publicada || 0).getTime()
-  );
+  const porFecha = (a: VacanteCruda, b: VacanteCruda) =>
+    new Date(b.publicada || 0).getTime() - new Date(a.publicada || 0).getTime();
+  unicas.sort(porFecha);
+
+  // El recorte a 150 se reparte por turnos entre fuentes en vez de cortar por
+  // fecha a secas. Ordenar solo por fecha dejaba fuera mercados enteros: las
+  // vacantes de Venezuela son mas antiguas que las de Mexico y Espana, asi que
+  // caian por debajo del corte y la fuente parecia vacia aunque trajera 47.
+  // Dentro de cada fuente se respeta el orden por fecha.
+  const porFuente = new Map<string, VacanteCruda[]>();
+  for (const v of unicas) {
+    const lista = porFuente.get(v.fuente);
+    if (lista) lista.push(v);
+    else porFuente.set(v.fuente, [v]);
+  }
+  const colas = [...porFuente.values()];
+  const seleccion: VacanteCruda[] = [];
+  for (let i = 0; seleccion.length < 150; i++) {
+    const antes = seleccion.length;
+    for (const cola of colas) {
+      if (i < cola.length) seleccion.push(cola[i]);
+      if (seleccion.length >= 150) break;
+    }
+    if (seleccion.length === antes) break; // no queda nada en ninguna cola
+  }
+  seleccion.sort(porFecha);
 
   return NextResponse.json({
     total: unicas.length,
-    vacantes: unicas.slice(0, 150),
+    vacantes: seleccion,
     fallos,
   });
 }
