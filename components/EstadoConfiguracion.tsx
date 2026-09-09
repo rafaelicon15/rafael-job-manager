@@ -138,7 +138,7 @@ export default function EstadoConfiguracion() {
       titulo: "Careerjet (Venezuela, España y LatAm)",
       detalle: ajustes.careerjetKey
         ? "Clave guardada"
-        : "Opcional. Gratuita. La clave está en careerjet.com/partners, dentro de «Access API» de tu sitio; no es el ID de afiliado.",
+        : "Opcional. Gratuita, y la única fuente con clave que trae vacantes de Venezuela. La clave está en careerjet.com/partners, dentro de «Access API» de tu sitio.",
       estado: ajustes.careerjetKey ? "ok" : "opcional",
       resultado: careerjet,
       accion: (

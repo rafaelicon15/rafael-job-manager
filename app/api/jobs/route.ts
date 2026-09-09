@@ -339,13 +339,17 @@ async function jooble(
 }
 
 /**
- * Careerjet: agregador con buena cobertura de Venezuela, España y LatAm, que
- * es el mercado real de Rafael. Dos detalles de su API que hay que respetar:
- *  - `user_ip` y `user_agent` son OBLIGATORIOS. Sin ellos devuelve 403. Se
- *    reenvían los del usuario que originó la búsqueda, que es lo que pide su
- *    documentación, no los del servidor.
- *  - Solo acepta un `locale_code` por petición, así que se consulta cada
- *    mercado por separado y se juntan los resultados.
+ * Careerjet. Tiene dos APIs y la moderna NO sirve aqui, medido con la clave
+ * real de Rafael:
+ *  - La v4 (search.api, HTTPS, Basic auth) autoriza por lista blanca de IPs:
+ *    responde 403 "Unauthorized access from IP ...". Vercel sale por IPs
+ *    dinamicas, asi que no hay nada que poner en esa lista. Mandar Referer u
+ *    Origin del sitio registrado no la convence.
+ *  - La clasica (public.api) autoriza por referrer, aceptando la misma clave
+ *    como `affid`, y desde cualquier IP. Es la que se usa.
+ * Solo escucha en HTTP: el HTTPS de public.api no llega a conectar. La llamada
+ * sale del servidor, no del navegador, y solo lleva la busqueda y el affid.
+ * Cubre es_VE, que es el unico agregador con clave que trae Venezuela.
  */
 async function careerjet(
   q: string,
@@ -353,58 +357,52 @@ async function careerjet(
   locales: string[],
   ubicacion: string,
   ip: string,
-  ua: string
+  ua: string,
+  referer: string
 ): Promise<VacanteCruda[]> {
   if (!apiKey) return [];
-  const auth = "Basic " + Buffer.from(apiKey + ":").toString("base64");
 
   const porMercado = await Promise.allSettled(
     locales.map(async (locale) => {
-      const url = new URL("https://search.api.careerjet.net/v4/query");
+      const url = new URL("http://public.api.careerjet.net/search");
+      url.searchParams.set("affid", apiKey);
       url.searchParams.set("locale_code", locale);
       if (q) url.searchParams.set("keywords", q);
       if (ubicacion) url.searchParams.set("location", ubicacion);
-      url.searchParams.set("page_size", "50");
+      url.searchParams.set("pagesize", "50");
       url.searchParams.set("sort", "date");
+      // Obligatorios segun su documentacion: sin ellos devuelve 403.
       url.searchParams.set("user_ip", ip);
       url.searchParams.set("user_agent", ua);
 
-      // Medido desde Vercel: Careerjet tarda 6-8 s por locale, con picos que
-      // superaban el limite por defecto de 12 s y abortaban la fuente entera.
       const d = await conReintento(async () => {
         const r = await traer(
           url.toString(),
-          { headers: { Authorization: auth } },
+          // Sin Referer rechaza la llamada: es su forma de autorizar.
+          { headers: { Referer: referer } },
           30000
         );
         return await r.json();
       });
 
-      // La API responde con type LOCATIONS cuando la ubicación es ambigua o no
-      // existe, y con ERROR si algo falta. En ninguno de los dos casos hay
-      // vacantes, y no es un fallo que deba tumbar el resto de la búsqueda.
+      // Responde LOCATIONS cuando la ubicacion es ambigua y ERROR si falta
+      // algo. En ninguno de los dos casos hay vacantes, y no debe tumbar el
+      // resto de la busqueda.
       if (d?.type !== "JOBS") return [];
 
       const pais = locale.split("_")[1] ?? "";
-      return (d.jobs ?? []).map((j: Record<string, unknown>, i: number) => {
-        const min = j.salary_min as number | undefined;
-        const max = j.salary_max as number | undefined;
-        const moneda = String(j.salary_currency_code ?? "");
-        return {
-          id: `careerjet-${locale}-${i}-${String(j.url ?? "").slice(-14)}`,
-          titulo: String(j.title ?? ""),
-          empresa: String(j.company ?? ""),
-          ubicacion: `${String(j.locations ?? "")}${pais ? ` (${pais})` : ""}`,
-          modalidad: "",
-          salario:
-            String(j.salary ?? "") ||
-            (min && max ? `${min} - ${max} ${moneda}`.trim() : ""),
-          url: String(j.url ?? ""),
-          fuente: `Careerjet ${pais}`,
-          publicada: String(j.date ?? ""),
-          descripcion: limpiarHTML(String(j.description ?? "")),
-        };
-      });
+      return (d.jobs ?? []).map((j: Record<string, unknown>, i: number) => ({
+        id: `careerjet-${locale}-${i}-${String(j.url ?? "").slice(-14)}`,
+        titulo: String(j.title ?? ""),
+        empresa: String(j.company ?? ""),
+        ubicacion: `${String(j.locations ?? "")}${pais ? ` (${pais})` : ""}`,
+        modalidad: "",
+        salario: String(j.salary ?? ""),
+        url: String(j.url ?? ""),
+        fuente: `Careerjet ${pais}`,
+        publicada: String(j.date ?? ""),
+        descripcion: limpiarHTML(String(j.description ?? "")),
+      }));
     })
   );
   return juntarMercados(porMercado, "Careerjet");
@@ -489,7 +487,15 @@ export async function POST(req: Request) {
         // Careerjet exige la IP y el navegador de quien origina la búsqueda.
         (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() ||
           "127.0.0.1",
-        req.headers.get("user-agent") ?? UA
+        req.headers.get("user-agent") ?? UA,
+        // Careerjet autoriza por el sitio registrado. En local no hay uno
+        // valido, asi que se cae al dominio de produccion.
+        (() => {
+          const origen = req.headers.get("origin") ?? "";
+          return /^https:\/\/[^/]+\.vercel\.app$/.test(origen)
+            ? `${origen}/`
+            : "https://rafael-job-manager.vercel.app/";
+        })()
       ),
     });
 
