@@ -66,13 +66,33 @@ async function traer(url: string, init?: RequestInit, msTiempoLimite = 12000) {
       try {
         motivo = String(JSON.parse(cuerpo)?.error ?? "");
       } catch {
-        motivo = cuerpo.trim().slice(0, 160);
+        // Los 5xx de nginx llegan como HTML; sin limpiar, el usuario
+        // ve una pagina entera metida en el mensaje de error.
+        motivo = limpiarHTML(cuerpo).replace(/\s+/g, " ").trim().slice(0, 160);
       }
       throw new Error(`HTTP ${r.status}${motivo ? ` — ${motivo}` : ""}`);
     }
     return r;
   } finally {
     clearTimeout(t);
+  }
+}
+
+/**
+ * Reintenta una vez ante fallos que no son culpa de la peticion. Medido contra
+ * Careerjet desde Vercel: 1 de cada 6 llamadas devolvia un 502 de su nginx, y
+ * la latencia oscilaba entre 7 y 30 s. Un 401 o un 404, en cambio, van a fallar
+ * igual la segunda vez, asi que no se reintentan.
+ */
+async function conReintento<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    const transitorio = /HTTP 5\d\d|aborted|fetch failed|network|ECONN/i.test(msg);
+    if (!transitorio) throw e;
+    await new Promise((r) => setTimeout(r, 800));
+    return await fn();
   }
 }
 
@@ -351,12 +371,14 @@ async function careerjet(
 
       // Medido desde Vercel: Careerjet tarda 6-8 s por locale, con picos que
       // superaban el limite por defecto de 12 s y abortaban la fuente entera.
-      const r = await traer(
-        url.toString(),
-        { headers: { Authorization: auth } },
-        30000
-      );
-      const d = await r.json();
+      const d = await conReintento(async () => {
+        const r = await traer(
+          url.toString(),
+          { headers: { Authorization: auth } },
+          30000
+        );
+        return await r.json();
+      });
 
       // La API responde con type LOCATIONS cuando la ubicación es ambigua o no
       // existe, y con ERROR si algo falta. En ninguno de los dos casos hay
