@@ -289,3 +289,38 @@ puede hacer sin rehacer la interfaz.
 | Pegar una URL de LinkedIn da error | LinkedIn bloquea la descarga sin sesión. Usa la extensión, o copia el texto y pégalo a mano. |
 | El PDF sale sin fechas | No has rellenado las fechas en el Perfil maestro (paso 5). |
 | La extensión dice "casi no tiene texto" | La página carga con JavaScript y aún no terminó. Espera a que cargue del todo y reintenta. |
+
+---
+
+## La extensión de Chrome
+
+Hace dos cosas, y ninguna es postularse por ti.
+
+**Capturar esta vacante.** Lee el texto de la oferta que tengas abierta y la
+manda a tu Job Manager.
+
+**Rellenar este formulario.** Rellena el formulario de postulación con tus
+datos del perfil maestro. La primera vez hay que sincronizar:
+
+1. Abre tu Job Manager en una pestaña.
+2. Pulsa la extensión → **Sincronizar mis datos**. Lee tu perfil de esa pestaña
+   y guarda una ficha compacta en la extensión. Solo funciona estando en la app,
+   así la extensión no necesita permiso permanente sobre ningún sitio.
+3. A partir de ahí, en cualquier portal: extensión → **Rellenar este formulario**.
+
+Los campos que rellena se marcan en **verde**. Los que no puede rellenar quedan
+en **ámbar** y son tuyos. Y los cambios sobre un valor por defecto también salen
+en ámbar, para que los mires.
+
+Lo que no hace, por diseño:
+
+- **No envía nunca el formulario.** El botón de postular lo pulsas tú.
+- **No marca casillas.** Aceptar unas condiciones lo decides tú, no el programa.
+- **No toca** contraseñas, DNI, tarjetas ni la subida de archivos: el CV que se
+  adjunta lo eliges tú.
+- **No sobrescribe** lo que ya hayas escrito.
+- **No inventa.** Si el portal pregunta "¿cuántos años con Webflow?" y eso no
+  está en tu perfil, lo deja en ámbar. Esa pregunta la contestas tú.
+
+Si cambias tu perfil, vuelve a sincronizar. La extensión te avisa si la ficha
+tiene más de 30 días.
