@@ -72,7 +72,10 @@ export default function Panel() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold">Hola, {perfil.nombre.split(" ")[0]}</h1>
+        {/* Sin perfil cargado el saludo quedaba en "Hola," a secas. */}
+        <h1 className="text-2xl font-bold">
+          {perfil.nombre ? `Hola, ${perfil.nombre.split(" ")[0]}` : "Hola"}
+        </h1>
         <p className="mt-1 text-sm text-[var(--color-suave)]">
           Tu centro de mando para buscar, evaluar y ganar vacantes.
         </p>
@@ -168,7 +171,7 @@ export default function Panel() {
               href="/vacantes"
               className="inline-flex items-center gap-1 text-xs text-[var(--color-acento)] hover:underline"
             >
-              Ver todas <ArrowRight size={13} />
+              Ver todas <ArrowRight size={13} className="icono-avanza" />
             </Link>
           </div>
           {pendientes.length === 0 ? (
@@ -286,7 +289,7 @@ export default function Panel() {
 
           {vacantes.length > 0 && (
             <button onClick={exportar} className="btn mt-4 w-full">
-              <Download size={15} /> Descargar respaldo (.json)
+              <Download size={15} className="icono-late" /> Descargar respaldo (.json)
             </button>
           )}
         </section>

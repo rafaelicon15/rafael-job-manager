@@ -95,9 +95,13 @@ function Contenido() {
           }
         />
       ) : vista === "lista" ? (
-        <ul className="space-y-2.5">
-          {visibles.map((v) => (
-            <li key={v.id} className="panel p-4">
+        <ul className="aparece-escalonado space-y-2.5">
+          {visibles.map((v, i) => (
+            <li
+              key={v.id}
+              className="panel panel-interactivo p-4"
+              style={{ "--i": i } as React.CSSProperties}
+            >
               <div className="flex flex-wrap items-start gap-3">
                 {v.analisis ? (
                   <Puntaje valor={v.analisis.puntaje} />

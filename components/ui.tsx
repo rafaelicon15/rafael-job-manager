@@ -183,11 +183,11 @@ export function Modal({
   if (!abierto) return null;
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm"
+      className="aparece fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm"
       onClick={onCerrar}
     >
       <div
-        className={`panel my-8 w-full ${ancho}`}
+        className={`entra panel my-8 w-full ${ancho}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-[var(--color-borde)] px-5 py-3.5">

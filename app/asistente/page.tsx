@@ -226,7 +226,7 @@ export default function Asistente() {
             onClick={responder}
             disabled={cargando || !pregunta.trim()}
           >
-            <Sparkles size={15} />
+            <Sparkles size={15} className="icono-late" />
             {cargando ? "Redactando…" : "Responder como yo"}
           </button>
           {cargando && <Cargando texto="Pensando…" />}

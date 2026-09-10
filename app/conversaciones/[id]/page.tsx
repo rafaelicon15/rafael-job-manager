@@ -493,7 +493,7 @@ export default function Hilo({ params }: { params: Promise<{ id: string }> }) {
             onClick={redactar}
             disabled={!!cargando || conv.mensajes.length === 0}
           >
-            <Sparkles size={15} /> Redactar como yo
+            <Sparkles size={15} className="icono-late" /> Redactar como yo
           </button>
           {cargando && <Cargando texto={cargando} />}
         </div>

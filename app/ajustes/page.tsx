@@ -285,7 +285,7 @@ export default function Ajustes() {
 
         <div className="flex flex-wrap gap-2">
           <button className="btn btn-primario" onClick={exportar}>
-            <Download size={15} /> Descargar respaldo
+            <Download size={15} className="icono-late" /> Descargar respaldo
           </button>
           <button className="btn" onClick={() => archivoRef.current?.click()}>
             <Upload size={15} /> Importar respaldo
