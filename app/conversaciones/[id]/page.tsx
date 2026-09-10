@@ -19,7 +19,7 @@ import { useApp } from "@/lib/contexto";
 import { parsearVacante, redactarEnHilo, type RespuestaHilo } from "@/lib/gemini";
 import { CANALES, type Idioma } from "@/lib/types";
 import { nuevoId } from "@/lib/store";
-import { Alerta, BotonCopiar, Cargando, Modal, Vacio } from "@/components/ui";
+import { Alerta, BotonCopiar, Cargando, EsqueletoDetalle, Modal, Vacio } from "@/components/ui";
 
 const TONOS = [
   "Profesional y directo",
@@ -68,7 +68,7 @@ export default function Hilo({ params }: { params: Promise<{ id: string }> }) {
     [estado.vacantes, conv?.vacanteId]
   );
 
-  if (!listo) return <p className="text-sm text-[var(--color-suave)]">Cargando…</p>;
+  if (!listo) return <EsqueletoDetalle />;
 
   if (!conv)
     return (

@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useApp } from "@/lib/contexto";
 import { CANALES, type Canal } from "@/lib/types";
-import { Modal, Vacio } from "@/components/ui";
+import { EsqueletoLista, Modal, Vacio } from "@/components/ui";
 import NuevaConversacion from "@/components/NuevaConversacion";
 
 const ICONO_CANAL: Record<Canal, string> = {
@@ -40,7 +40,7 @@ function Contenido() {
     [estado.conversaciones, verArchivadas, filtroCanal]
   );
 
-  if (!listo) return <p className="text-sm text-[var(--color-suave)]">Cargando…</p>;
+  if (!listo) return <EsqueletoLista />;
 
   return (
     <div className="space-y-5">
@@ -208,7 +208,7 @@ function Contenido() {
 
 export default function Conversaciones() {
   return (
-    <Suspense fallback={<p className="text-sm text-[var(--color-suave)]">Cargando…</p>}>
+    <Suspense fallback={<EsqueletoLista />}>
       <Contenido />
     </Suspense>
   );

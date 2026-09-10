@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { ExternalLink, LayoutGrid, List, Plus, Trash2 } from "lucide-react";
 import { useApp } from "@/lib/contexto";
 import { ESTADOS, type EstadoVacante } from "@/lib/types";
-import { InsigniaEstado, Modal, Puntaje, Vacio } from "@/components/ui";
+import { EsqueletoLista, InsigniaEstado, Modal, Puntaje, Vacio } from "@/components/ui";
 import NuevaVacante from "@/components/NuevaVacante";
 
 function Contenido() {
@@ -222,7 +222,7 @@ function Contenido() {
 
 export default function Vacantes() {
   return (
-    <Suspense fallback={<p className="text-sm text-[var(--color-suave)]">Cargando…</p>}>
+    <Suspense fallback={<EsqueletoLista />}>
       <Contenido />
     </Suspense>
   );
