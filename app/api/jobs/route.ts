@@ -492,13 +492,15 @@ export async function POST(req: Request) {
         (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() ||
           "127.0.0.1",
         req.headers.get("user-agent") ?? UA,
-        // Careerjet autoriza por el sitio registrado. En local no hay uno
-        // valido, asi que se cae al dominio de produccion.
+        // Careerjet autoriza por el sitio registrado, asi que el Referer
+        // tiene que ser el del propio despliegue: cada quien registra el
+        // suyo. En local no hay un dominio valido y la fuente fallara; es
+        // preferible a mandar el dominio de otro.
         (() => {
-          const origen = req.headers.get("origin") ?? "";
-          return /^https:\/\/[^/]+\.vercel\.app$/.test(origen)
-            ? `${origen}/`
-            : "https://rafael-job-manager.vercel.app/";
+          const origen = req.headers.get("origin");
+          if (origen && /^https:\/\//.test(origen)) return `${origen}/`;
+          const host = req.headers.get("host") ?? "";
+          return host ? `https://${host}/` : "";
         })()
       ),
     });

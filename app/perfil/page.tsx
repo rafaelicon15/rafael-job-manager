@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AlertTriangle, ChevronDown, Plus, RotateCcw, Trash2 } from "lucide-react";
 import { useApp } from "@/lib/contexto";
+import ImportarPerfil from "@/components/ImportarPerfil";
 import { nuevoId } from "@/lib/store";
 import { PERFIL_INICIAL } from "@/lib/seed";
 import type { Experiencia, Logro, PerfilMaestro } from "@/lib/types";
@@ -60,6 +61,8 @@ export default function Perfil() {
           </ul>
         </Alerta>
       )}
+
+      <ImportarPerfil />
 
       <Bloque titulo="Datos de contacto">
         <div className="grid gap-3 sm:grid-cols-2">
