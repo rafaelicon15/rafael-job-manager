@@ -194,3 +194,18 @@ sin respaldar.
 
 Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · Google Gemini
 (`@google/genai`) · jsPDF · lucide-react
+
+## Pruebas
+
+```bash
+npm test
+```
+
+70 pruebas sobre los módulos que deciden algo: deduplicación de tareas y de
+vacantes, validación del perfil pegado, lectura de .docx y PDF, las reglas de
+los prompts, el autorrelleno de formularios (en un DOM simulado) y el viaje de
+datos entre la extensión y la app.
+
+Las del autorrelleno son las que más importan: comprueban que no toca
+contraseñas ni documentos de identidad, que no marca casillas, que no
+sobrescribe lo ya escrito y que no mete un dato en el campo equivocado.
