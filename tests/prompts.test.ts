@@ -121,6 +121,20 @@ test("las reglas de estilo prohíben los guiones largos y los superlativos", () 
 });
 
 test("el prompt se dirige al candidato por su nombre, no a uno fijo", () => {
+  // Se comprueba cambiando el perfil en lugar de buscar un nombre concreto:
+  // así la prueba vale para cualquiera y no deja un nombre real escrito.
+  const otro = promptHilo(
+    { ...perfil, nombre: "Beatriz Serra" },
+    "linkedin",
+    "Contacto",
+    [{ de: "ellos", texto: "Hola", fecha: "" }],
+    vacante,
+    "",
+    "es",
+    "Profesional y directo",
+    []
+  );
   assert.match(abierto, /Ana Torres/);
-  assert.doesNotMatch(abierto, /Rafael/);
+  assert.match(otro, /Beatriz Serra/);
+  assert.doesNotMatch(otro, /Ana Torres/, "el nombre sale del perfil, no del código");
 });
