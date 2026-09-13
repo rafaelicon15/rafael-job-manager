@@ -331,3 +331,22 @@ Lo que no hace, por diseño:
 
 Si cambias tu perfil, vuelve a sincronizar. La extensión te avisa si la ficha
 tiene más de 30 días.
+
+---
+
+## Mantener sincronizada la versión pública
+
+`job-manager` es privado y lleva el perfil real; `job-manager-plantilla` es la
+copia pública que usan otros. Para llevar allí los cambios de aquí:
+
+```bash
+node scripts-sincronizar.mjs ../job-manager-plantilla
+```
+
+Copia los ficheros del último commit, aplica las sustituciones que
+despersonalizan el código, y **aborta si encuentra un dato personal para el que
+no hay regla**. Los ficheros propios de la plantilla —el perfil semilla, su
+documentación, su licencia— nunca se sobrescriben.
+
+Copiar a mano ya metió dos veces un nombre real en el repositorio público, y
+una tercera se evitó solo porque el script lo bloqueó. No copies a mano.
