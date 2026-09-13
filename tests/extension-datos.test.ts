@@ -11,11 +11,11 @@ import { JSDOM } from "jsdom";
 const FUENTE = readFileSync(new URL("../extension/rellenar.js", import.meta.url), "utf8");
 
 const FICHA = {
-  nombre: "Rafael A. Licón",
-  nombrePila: "Rafael A.",
-  apellidos: "Licón",
+  nombre: "Ana Torres Gil",
+  nombrePila: "Ana",
+  apellidos: "Torres Gil",
   email: "correo@ejemplo.com",
-  telefono: "+58 424 3454919",
+  telefono: "+58 000 0000000",
   ciudad: "Maracay",
   pais: "Venezuela",
   codigoPostal: "2101",
