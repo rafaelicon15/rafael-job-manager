@@ -13,6 +13,8 @@ export const PERFIL_INICIAL: PerfilMaestro = {
   email: "rafaelicon15@gmail.com",
   telefono: "+58 424 3454919",
   ubicacion: "Maracay, Aragua, Venezuela",
+  codigoPostal: "",
+  fechaNacimiento: "",
   links: [
     { etiqueta: "Portafolio", url: "https://rafael.developer-ve.com" },
     { etiqueta: "LinkedIn", url: "https://linkedin.com/in/rafaelicon" },
