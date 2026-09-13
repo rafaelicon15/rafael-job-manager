@@ -312,6 +312,13 @@ Los campos que rellena se marcan en **verde**. Los que no puede rellenar quedan
 en **ámbar** y son tuyos. Y los cambios sobre un valor por defecto también salen
 en ámbar, para que los mires.
 
+**Responder sus preguntas con IA.** Lo que el autorrelleno deja en ámbar no
+siempre es un descuido: "¿qué experiencia tienes con GoHighLevel y qué
+resultados conseguiste?" no se copia de una ficha. Ese botón recoge esas
+preguntas y las abre en el Job Manager, que las redacta contra tu perfil
+maestro, con las mismas reglas de honestidad que el resto de la app. Tú
+revisas, copias y pegas.
+
 Lo que no hace, por diseño:
 
 - **No envía nunca el formulario.** El botón de postular lo pulsas tú.
