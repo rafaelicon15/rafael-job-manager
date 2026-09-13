@@ -326,6 +326,11 @@ Lo que no hace, por diseño:
 - **No toca** contraseñas, DNI, tarjetas ni la subida de archivos: el CV que se
   adjunta lo eliges tú.
 - **No sobrescribe** lo que ya hayas escrito.
+- **Con los desplegables propios** (esos que no son un `<select>` sino un
+  componente del portal, con su insignia y su flechita) abre la lista y elige,
+  pero solo si el texto coincide exactamente con tu dato. Si no, los marca en
+  ámbar diciendo qué elegir. "Venezuela" frente a "Venezuela (Bolivariana)" no
+  es exacto: eso lo decides tú.
 - **No inventa.** Si el portal pregunta "¿cuántos años con Webflow?" y eso no
   está en tu perfil, lo deja en ámbar. Esa pregunta la contestas tú.
 
