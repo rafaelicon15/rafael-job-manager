@@ -6,11 +6,18 @@ import type { PerfilMaestro, Ajustes, EstadoApp } from "./types";
 
 export const PERFIL_INICIAL: PerfilMaestro = {
   nombre: "Rafael A. Licón",
+  // Cómo se parte el nombre cuando un formulario lo pide por trozos. La
+  // inicial del segundo nombre no entra en ninguno de los dos: puesta en el
+  // nombre de pila sale "Rafael A." en la cuenta, y de "A." no hay forma de
+  // sacar el nombre completo.
+  nombrePila: "Rafael",
+  apellidos: "Licón",
   titular:
     "Especialista en Automatización de Marketing, CRO e IA | Desarrollador Web | PPC & SEO",
   titularEn:
     "Marketing Automation, CRO & AI Specialist | Web Developer | PPC & SEO",
   email: "rafaelicon15@gmail.com",
+  usuario: "rafaelicon15",
   telefono: "+58 424 3454919",
   ubicacion: "Maracay, Aragua, Venezuela",
   fechaNacimiento: "",
