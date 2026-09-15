@@ -23,6 +23,7 @@ en ningún servidor.
 | **Carta y mensaje** | Carta de presentación, línea de asunto y mensaje corto de LinkedIn para el reclutador, atando cada requisito a un hecho verificable. |
 | **Respuestas** | Cualquier pregunta de formulario o de reclutador, respondida como tú, con variantes cortas para campos con límite de caracteres. |
 | **Entrevista** | Guion para esa entrevista concreta: estrategia, datos a memorizar, preguntas probables con respuesta, y sobre todo las **preguntas incómodas** — requisitos que no cumples, solapamientos de fechas, título pendiente y salario. |
+| **Reuniones** | Cada llamada que ya pasó, resumida. Pegas tus apuntes o la transcripción y saca lo que se pierde al colgar: lo que prometió cada parte, las condiciones que salieron de pasada, las preguntas que te hicieron con una versión mejor de tu respuesta, lo que quedó sin contestar y el seguimiento listo para mandar. La ronda siguiente se prepara con eso delante. |
 | **Conversaciones** | Las vacantes que llegan por mensaje. Pega el hilo de LinkedIn, correo o WhatsApp, enlázalo con una vacante y responde desde ahí. Detecta lo que te pidieron y no has hecho, las preguntas tuyas que esquivaron, y las afirmaciones del hilo que tu perfil no respalda. |
 | **Perfil maestro** | La única fuente de verdad. Si un hecho no está aquí, el motor no puede afirmarlo. |
 | **Extensión de Chrome** | Captura la oferta que tienes abierta en LinkedIn, Computrabajo, InfoJobs o Indeed y la manda al panel con un clic. |
