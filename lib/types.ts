@@ -75,10 +75,10 @@ export interface PerfilMaestro {
   /**
    * Cómo se parte el nombre cuando un formulario lo pide por trozos.
    *
-   * No se deduce de `nombre`: "Rafael A. Licón" partido por espacios da
-   * "Rafael A." de nombre, y de la inicial "A." no hay forma de sacar
-   * "Andrés". En los nombres hispanos con dos apellidos el reparto tampoco es
-   * evidente. Si están vacíos se parte lo mejor posible, pero rellenarlos
+   * No se deduce de `nombre`: "Ana B. Torres" partido por espacios da
+   * "Ana B." de nombre, y de la inicial "B." no hay forma de sacar
+   * "Beatriz". En los nombres hispanos con dos apellidos el reparto tampoco
+   * es evidente. Si están vacíos se parte lo mejor posible, pero rellenarlos
    * evita el problema.
    */
   nombrePila?: string;

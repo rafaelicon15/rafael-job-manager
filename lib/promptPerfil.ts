@@ -26,7 +26,7 @@ Ese JSON va a alimentar una herramienta que analiza vacantes y redacta CV a medi
 - **No infles la responsabilidad.** Si colaboré en algo, el verbo es "colaboré", no "lideré".
 - **Distingue saber de haber usado.** Una herramienta que solo he tocado un rato va con nivel 1, nunca más.
 - La dirección postal y la fecha de nacimiento son opcionales y solo sirven para rellenar formularios. Si no te los doy, déjalos vacíos: no los deduzcas de la ciudad ni de la edad.
-- El nombre partido tampoco se deduce. Si te digo "Rafael A. Licón" no sabes qué hay detrás de esa "A.": pregúntamelo o deja el segundo nombre vacío.
+- El nombre partido tampoco se deduce. Si te digo "Ana B. Torres" no sabes qué hay detrás de esa "A.": pregúntamelo o deja el segundo nombre vacío.
 - Si algo te falta y no te lo puedo dar, escribe literalmente \`[COMPLETAR: qué falta]\` en ese campo. No lo adivines.
 
 ## Los logros son la pieza central
@@ -57,7 +57,7 @@ Sé conservador. Un 4 mal puesto se cae en la primera entrevista técnica.
   "titularEn": "El mismo titular en inglés",
   "email": "correo@ejemplo.com",
   "telefono": "+00 000 0000000",
-  "nombrePila": "Solo el nombre de pila, sin iniciales. Ejemplo: Rafael",
+  "nombrePila": "Solo el nombre de pila, sin iniciales. Ejemplo: Ana",
   "segundoNombre": "Segundo nombre completo, si lo tengo y te lo digo. Vacío si no.",
   "apellidos": "Apellidos, los dos si son dos.",
   "ubicacion": "Ciudad, Estado, País. Es la ubicación profesional, la que sale en el CV.",

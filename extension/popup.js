@@ -150,7 +150,7 @@ function leerFicha() {
     (p.links || []).find((l) => patron.test(l.etiqueta || "") || patron.test(l.url || ""))?.url || "";
 
   // El nombre partido se toma del perfil si está. Partirlo por espacios es un
-  // último recurso: "Rafael A. Licón" da "Rafael A." de nombre de pila, y de
+  // último recurso: "Ana B. Torres" da "Ana B." de nombre de pila, y de
   // la inicial no hay forma de sacar el segundo nombre.
   const trozos = p.nombre.trim().split(/\s+/);
   const nombrePila =

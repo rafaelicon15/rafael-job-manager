@@ -95,26 +95,27 @@ export default function Perfil() {
             <Campo
               label="Nombre"
               valor={p.nombrePila ?? ""}
-              placeholder="Rafael"
+              placeholder="Ana"
               onChange={(v) => set({ nombrePila: v })}
             />
             <Campo
               label="Segundo nombre"
               valor={p.segundoNombre ?? ""}
-              placeholder="Andrés"
+              placeholder="Beatriz"
               onChange={(v) => set({ segundoNombre: v })}
             />
             <Campo
               label="Apellidos"
               valor={p.apellidos ?? ""}
-              placeholder="Licón"
+              placeholder="Torres Gil"
               onChange={(v) => set({ apellidos: v })}
             />
           </div>
           <p className="mt-1 text-xs leading-relaxed text-[var(--color-suave)]">
             Muchos formularios piden el nombre en trozos. Esto no se puede
-            deducir: de una inicial como “A.” no hay forma de sacar “Andrés”. Si
-            lo dejas vacío se parte lo mejor posible, pero rellenarlo lo arregla.
+            deducir: de una inicial no hay forma de sacar el nombre que hay
+            detrás. Si lo dejas vacío se parte lo mejor posible, pero
+            rellenarlo lo arregla.
           </p>
         </div>
 
