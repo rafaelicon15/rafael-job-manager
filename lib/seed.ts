@@ -844,6 +844,10 @@ export const AJUSTES_INICIALES: Ajustes = {
   joobleKey: "",
   careerjetKey: "",
   idiomaPorDefecto: "es",
+  monedaBase: "USD",
+  // Puestas a mano y a propósito: para decidir entre dos ofertas vale más una
+  // tasa que tú fijas hoy que una que se mueve sola bajo tus pies.
+  tasas: { USD: 1 },
 };
 
 export const ESTADO_INICIAL: EstadoApp = {
@@ -851,5 +855,6 @@ export const ESTADO_INICIAL: EstadoApp = {
   perfil: PERFIL_INICIAL,
   vacantes: [],
   conversaciones: [],
+  busquedas: [],
   ajustes: AJUSTES_INICIALES,
 };
