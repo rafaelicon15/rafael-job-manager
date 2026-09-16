@@ -21,6 +21,10 @@ import { execSync } from "node:child_process";
 /** Ficheros que la plantilla tiene distintos a propósito. Jamás se copian. */
 const PROPIOS = new Set([
   "lib/seed.ts", // perfil vacío en vez del real
+  // La plantilla saca las iniciales y el nombre del perfil cargado, en vez de
+  // llevarlos escritos. Al tocar la navegación hay que repetir el cambio allí
+  // a mano, igual que con el README.
+  "components/Navegacion.tsx",
   "README.md",
   "CONFIGURACION.md",
   "PROMPT-PERFIL.md",
