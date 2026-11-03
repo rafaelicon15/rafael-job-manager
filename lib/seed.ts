@@ -664,6 +664,26 @@ export const PERFIL_INICIAL: PerfilMaestro = {
       ],
     },
     {
+      // Declarado por él: "no tengo limitaciones en cuanto a GHL". Se desglosa
+      // en vez de dejar una sola línea porque un reclutador que busca un
+      // especialista de GoHighLevel filtra por la pieza concreta, no por el
+      // nombre de la plataforma. La verificación A2P es la que más separa a
+      // quien ha desplegado SMS en Estados Unidos de quien solo ha montado
+      // embudos.
+      categoria: "GoHighLevel",
+      items: [
+        { nombre: "GoHighLevel (alcance completo)", nivel: 4 },
+        { nombre: "Automatización de funnels de venta", nivel: 4 },
+        { nombre: "Secuencias de seguimiento de leads", nivel: 4 },
+        { nombre: "Campañas de promoción, cupones y códigos de descuento", nivel: 4 },
+        { nombre: "Verificación A2P (registro 10DLC)", nivel: 4 },
+        { nombre: "Email marketing y mensajería automatizada", nivel: 4 },
+        { nombre: "Configuración de subcuentas y estructura de agencia", nivel: 4 },
+        { nombre: "Integraciones con sistemas externos", nivel: 4 },
+        { nombre: "Páginas web y conexión de dominios", nivel: 4 },
+      ],
+    },
+    {
       categoria: "Marketing y Embudos",
       items: [
         { nombre: "GoHighLevel", nivel: 4 },
