@@ -37,9 +37,9 @@ export const PERFIL_INICIAL: PerfilMaestro = {
     },
   ],
   resumen:
-    "Profesional con más de 8 años de experiencia en la intersección de Tecnologías de la Información, Desarrollo Web y Marketing Digital Avanzado. Especializado en optimización de la tasa de conversión (CRO) y en el desarrollo de ecosistemas digitales para e-commerce y servicios con Shopify, WordPress (Elementor) y GoHighLevel. Integro agentes de Inteligencia Artificial para automatizar investigación de mercado, auditorías SEO y flujos de trabajo. Gestiono y optimizo campañas PPC en Google Ads y Meta Ads orientadas a maximizar el ROI.",
+    "Profesional con más de 8 años de experiencia en la intersección de Tecnologías de la Información, Desarrollo Web y Marketing Digital Avanzado. Especializado en optimización de la tasa de conversión (CRO) y en el desarrollo de ecosistemas digitales para e-commerce y servicios con Shopify, WordPress (Elementor) y GoHighLevel. Integro agentes de Inteligencia Artificial para automatizar investigación de mercado, auditorías SEO y flujos de trabajo. Gestiono y optimizo campañas PPC en Google Ads y Meta Ads orientadas a maximizar el ROI. He gestionado campañas de captación que registraron hasta 6.359 leads con un coste por resultado de 0,73 € en un periodo de 90 días.",
   resumenEn:
-    "Digital professional with 8+ years across IT, Web Development and Advanced Digital Marketing. Specialized in Conversion Rate Optimization (CRO) and building digital ecosystems for e-commerce and services using Shopify, WordPress (Elementor) and GoHighLevel. I integrate autonomous AI agents to automate market research, SEO audits and internal workflows, and I run Google Ads and Meta Ads campaigns focused on maximizing ROI.",
+    "Digital professional with 8+ years across IT, Web Development and Advanced Digital Marketing. Specialized in Conversion Rate Optimization (CRO) and building digital ecosystems for e-commerce and services using Shopify, WordPress (Elementor) and GoHighLevel. I integrate autonomous AI agents to automate market research, SEO audits and internal workflows, and I run Google Ads and Meta Ads campaigns focused on maximizing ROI. I have run lead generation campaigns that produced up to 6,359 leads at a €0.73 cost per result over a 90 day period.",
   experiencias: [
     {
       id: "exp-latam",
@@ -234,6 +234,31 @@ export const PERFIL_INICIAL: PerfilMaestro = {
             "GoHighLevel",
             "automatización de marketing",
             "ROI",
+          ],
+        },
+        {
+          id: "l-cohen-5",
+          texto:
+            "Audité la trazabilidad entre Meta Ads y GoHighLevel, documentando qué campos de atribución se perdían en la integración (campaña, anuncio y origen) y por qué eso impedía medir el coste por lead real dentro del CRM. Propuse el plan para cerrarlo: UTMs dinámicos en landing, campos ocultos mapeados a campos personalizados de GHL y activación de la API de Conversiones desde GHL hacia Meta.",
+          angulos: ["cro", "ppc"],
+          keywords: [
+            "GoHighLevel",
+            "Meta Ads",
+            "atribución",
+            "UTM",
+            "API de Conversiones",
+            "CAPI",
+            "trazabilidad",
+            "campos personalizados",
+            "CPL",
+            "ROAS",
+          ],
+          evidencia: [
+            {
+              tipo: "proyecto",
+              descripcion:
+                "Reporte de observación sobre trazabilidad Meta Ads frente a GoHighLevel, 22 de mayo de 2026",
+            },
           ],
         },
       ],
@@ -810,6 +835,29 @@ export const PERFIL_INICIAL: PerfilMaestro = {
         "Aprende rápido con formación o guía",
         "Aplica aprendizajes previos a problemas nuevos",
       ],
+    },
+  ],
+  /**
+   * Gente que puede responder por él. Sale de la recomendación pública que
+   * Ángel dejó en su perfil de LinkedIn, así que está escrita y es verificable
+   * sin tener que pedirle nada a nadie.
+   */
+  referencias: [
+    {
+      id: "ref-angel",
+      nombre: "Ángel Granados Verde",
+      cargo: "Especialista en GoHighLevel, n8n e IA",
+      empresa: "Cohen & Aguirre Lobby Solutions",
+      relacion:
+        "Trabajamos en el mismo equipo en Cohen & Aguirre. Dejó una recomendación pública en LinkedIn el 19 de abril de 2026.",
+      contacto: "https://www.linkedin.com/in/angel-granados-verde/",
+      // Lo que su recomendación respalda de verdad: SEO, optimización de
+      // páginas y entrega en plazo. No respalda las automatizaciones de GHL,
+      // aunque quien recomienda sea especialista en esa herramienta.
+      respalda: ["l-cohen-2", "l-cohen-3"],
+      usos: [],
+      notas:
+        "Vale el doble en vacantes de GoHighLevel: quien recomienda es especialista de la misma herramienta.",
     },
   ],
   lineasRojas: [
